@@ -45,8 +45,8 @@ def getXmlMainObject(xmlRootNode, objXmlObjectList):
 
 def getXmlParamDictionary(objXmlObjectList, testModuleName):
     try:
-        print(objXmlObjectList)
-        print(testModuleName)
+        print("objXmlObjectList : ", objXmlObjectList)
+        print("testModuleName : ", testModuleName)
         for obj in objXmlObjectList.my_objects:
             if bool(re.search(testModuleName, str(obj.sfunModuleName), re.IGNORECASE)):
 
@@ -54,7 +54,5 @@ def getXmlParamDictionary(objXmlObjectList, testModuleName):
                 listOfTuplesToDict = dict(obj.messages)
                 return listOfTuplesToDict
 
-    except cCommonDataConfig.CustomException:
-        raise Exception
     except Exception as instance:
         raise MemoryError

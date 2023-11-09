@@ -38,14 +38,16 @@ sample_data = [
                                                 index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7','beam8'],
                                                 dtype=object)'''
 dict_input_raw_data = pd.DataFrame(sample_data)
-
+print(dict_input_raw_data)
 # 5. Parser both process and sub-process . Creates final process packet dictionary . Fills Data
 dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process, dict_input_raw_data)
+print("========Going to key this to ptest ============")
 print(dict_finalDataPacket)
+print("===============================================")
 
 # 6. post data to ptest
 push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
-print(dict_finalDataPacket)
+print("result = ", push_return)
 
 # Output DataFrame
 # Python 2.7 unicode data storage
@@ -69,4 +71,3 @@ print(dict_finalDataPacket)
 
 
 # self.assertEqual(dict_finalDataPacket != None, 1)
-print("result = ", dict_finalDataPacket)

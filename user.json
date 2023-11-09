@@ -1,6 +1,6 @@
 {
 "employees":[
-    {"firstName":"520463", "lastName":"idontknow"},
-    {"firstName":"dummy", "lastName":"testdatabase"}
+    {"username":"520463", "password":"idontknow"},
+    {"username":"dummy", "password":"testdatabase"}
 ]
 }

@@ -212,9 +212,9 @@ class cPTest_parser_json:
         logging.info("In mPTest_fill_data_packet(): Fill JSON FinalProcessPacket with InputDataPacket")
         for ii, i in enumerate(dict_final_data_packet):
             for ij, j in enumerate(dict_final_data_packet[i]):
-                # print(ii, " - ", ij, " : ")
-                # print(dict_input_raw_data[ij][ii])
-                dict_final_data_packet[i][j]['value'] = dict_input_raw_data[ij][ii]
+                print(i, " - ", j, " : ")
+                print(dict_input_raw_data[j][i])
+                dict_final_data_packet[i][j]['value'] = dict_input_raw_data[j][i]
 
         logging.info("In mPTest_fill_data_packet():  Dictionary of Final Data Packet", dict_final_data_packet)
 

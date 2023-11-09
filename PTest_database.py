@@ -1,12 +1,3 @@
-####################################################################
-#
-# Name        : PTest_database.py
-# Author      : LEENA PATIL
-# Data        : June 15, 2021
-# Copyright   : Quanergy Systems 2021
-#
-####################################################################
-
 import os , sys
 import time
 import requests
@@ -189,7 +180,7 @@ class cPTest_database:
                 if 'err' in getJsonFile.keys() or len(getJsonFile) == 0:
                     message = "2. In mPTest_database_get_json_process_file(): Unknown Json file: {}".format(getJsonFile['err'])
                     logging.error(message)
-                    QMessageBox.information(QMessageBox(), "Error", "Unknown Json file:{}".format(getJsonFile['err']))
+                    # QMessageBox.information(QMessageBox(), "Error", "Unknown Json file:{}".format(getJsonFile['err']))
                     #return getJsonFile['err']
                 else:
                     logging.info("In mPTest_database_get_json_process_file() : connection Successful")

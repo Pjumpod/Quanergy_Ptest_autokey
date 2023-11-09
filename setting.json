@@ -1,4 +1,6 @@
 {
   "windows_path": "C:\\tmp",
-  "linux_path" : "/data/D5_sensor_list"
+  "linux_path" : "/data/D5_sensor_list",
+  "_comment1_" : "Below is File format name for each station",
+  "Vertical_Angle" : "_vertical_angle.csv"
 }
