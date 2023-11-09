@@ -10,13 +10,13 @@ import tkinter as tk
 from tkinter import simpledialog, messagebox, ttk
 
 
-def askQP():
+def askQP(subprocess_name):
     serial_num = "xx"
     while (len(serial_num) != 6) or (serial_num[:2].upper() != "QP"):
         serial_num = simpledialog.askstring("Question", "Enter your qpnum: ")
         if serial_num == None:
             serial_num = "xx"
-    if platform.system().upper() == "WINDOWS":
+    if subprocess_name == "Vertical_Angle":
         serial_num = serial_num.upper()
     else:
         serial_num = serial_num.lower()
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     print("User Name = ", username)
     print("password = ", password)
 
-    serial_num = askQP()
+    serial_num = askQP(subprocess_name)
     print("QP = ", serial_num)
 
     ptest_server_path = 'http://ptest.quanergy.com/'
