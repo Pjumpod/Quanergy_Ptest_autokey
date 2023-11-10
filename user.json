@@ -1,6 +1,8 @@
 {
 "employees":[
     {"username":"520463", "password":"idontknow"},
-    {"username":"dummy", "password":"testdatabase"}
+    {"username":"dummy", "password":"testdatabase"},
+    {"username":"pthongngam", "password":"letmein123"},
+    {"username":"schatngen", "password":"letmein123"}
 ]
 }

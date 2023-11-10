@@ -15,20 +15,21 @@ class cPTest_results:
         logging.info("In mResults_get_input_files() : Get Results Files from Server ")
         logging.info("==============================================================")
         # print("AP0")
-        get_files_results_static_process_file_list = self.mResults_list_static_xml_process(subprocess_name)
-        print(get_files_results_static_process_file_list)
+        get_files_results_static_process_file_str = self.mResults_list_static_xml_process(subprocess_name)
+        # print(get_files_results_static_process_file_str)
         results_qpnum_path = results_dir_path # os.path.join(results_dir_path, qpnum + '/')
         print("In mResults_get_input_files() :'Results Server Path {}".format(results_qpnum_path))
-        print("In mResults_get_input_files() :'Results static dictionary {}".format(get_files_results_static_process_file_list))
+        print("In mResults_get_input_files() :'Results static dictionary {}".format(get_files_results_static_process_file_str))
         results_dataframe = {}
         results_list_of_dataframe_dictionary = {}
+        get_files_results_static_process_file_list = str(get_files_results_static_process_file_str).split(",")
 
         try:
 
             if get_files_results_static_process_file_list:
 
                 # 1. Get List of csv files of a Process(Eg: Vertical Angle) from Static Dictionary
-                logging.info("In mResults_get_input_files() :'Results process name {} static dictionary files {}".format(subprocess_name, get_files_results_static_process_file_list))
+                print("In mResults_get_input_files() :'Results process name {} static dictionary files {}".format(subprocess_name, get_files_results_static_process_file_list))
 
                 # 2. Get each file from list of files of a Process from Static Dictionary
                 for result_file in get_files_results_static_process_file_list:
@@ -36,7 +37,7 @@ class cPTest_results:
                     # 3. Check QP dir path exists in the Server Path
                     if os.path.isdir(results_qpnum_path):
                         print("In mResults_get_input_files() :'Directory {} Exist.".format(results_qpnum_path))
-
+                        print("Find files for " + result_file)
                         # 4. Get all files from Results Server(results_qpnum_path) that matches subprocess result filename
                         get_files_results_qpnum_dir_path = glob.glob("".join([results_qpnum_path, "\\*{}".format(result_file)]))
                         print("In mResults_get_input_files() :'List Files in Directory {}".format(get_files_results_qpnum_dir_path))
