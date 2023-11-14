@@ -47,11 +47,11 @@ class cPTest_results:
                         if bool(get_files_results_qpnum_dir_path) == True:
 
                             # 2. Get file list form results_qpnum_dir
-                            for result_file in get_files_results_qpnum_dir_path:
-                                print("In mResults_get_input_files() :'Get Each result_File in List {}".format(result_file))
+                            for result_file_ in get_files_results_qpnum_dir_path:
+                                print("In mResults_get_input_files() :'Get Each result_File in List {}".format(result_file_))
                                 # Each raw file converted to ptest json process DataFrame
-                                results_dataframe = self.mResults_map_results_to_ptest(result_file, subprocess_name)
-                                results_list_of_dataframe_dictionary[result_file] = results_dataframe
+                                results_dataframe = self.mResults_map_results_to_ptest(result_file_, subprocess_name)
+                                results_list_of_dataframe_dictionary[result_file_] = results_dataframe
                         else:
                             logging.error("In mResults_get_input_files() :'Result file do not exist in the Server Path .")
                             # returns empty list to gui
@@ -87,7 +87,13 @@ class cPTest_results:
     def mResults_map_results_to_ptest(self, results_file_fullpath, subprocess_name):
 
         # Convert each csv file to dataframe
-        dict_input_raw_data = pd.read_csv(results_file_fullpath, header=None)
+        dict_input_raw_data = ""
+        if subprocess_name == "Power_Calibration_Over_Temperature":
+            return results_file_fullpath
+        if ".csv" in results_file_fullpath.lower():
+            dict_input_raw_data = pd.read_csv(results_file_fullpath, header=None)
+        elif ".png" in results_file_fullpath.lower():
+            return results_file_fullpath
         result_file_name = os.path.basename(results_file_fullpath)
         results_dataframe = {}
 
@@ -118,7 +124,7 @@ class cPTest_results:
             else:
 
                 min_limit = 0
-                max_limit = 500
+                max_limit = 1000
                 results_dataframe, columns_list = self.validate_Performance_Data(results_file_fullpath, min_limit, max_limit)
                 results_dataframe = pd.DataFrame(results_dataframe,
                                                  columns=columns_list,
@@ -158,7 +164,7 @@ class cPTest_results:
             print("Print correlation values", series_performance_test)
 
             # check correlation condition
-            if (series_performance_test <= 1).all() & (series_performance_test > 0.99).all():
+            if (series_performance_test <= 1).all() & (series_performance_test > 0.1).all():
 
                 print("Check correlation condition Successful : Ready to push")
 

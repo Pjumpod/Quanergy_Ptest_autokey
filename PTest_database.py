@@ -1,8 +1,9 @@
-import os , sys
+import os, sys
 import time
 import requests
 import json
 import logging
+from PIL import Image
 
 #from common.PTest_common import cCommonDataConfig
 #from common.PTest_log import cPTest_log
@@ -326,7 +327,7 @@ class cPTest_database:
         ptest_push_path = self.mPTest_database_post_path()
         #ptest_push_path = 'http://ptest-stage.corp.quanergy.com/m1/automate/updateprocessdata/' + "QP4A8B" + '/'
         message = "In mPTest_database_post_data_file(): path:{}".format(ptest_push_path)
-        logging.info(message)
+        print(message)
 
         # 1. Format Json data
         json_data = {
@@ -347,9 +348,12 @@ class cPTest_database:
         json_dict = {'data': json.dumps(json_data)}
 
         # 3. Create File Handlers
-        fileobj1 = open(inputdataFiles[0], 'rb')
-        fileobj2 = open(inputdataFiles[1], 'rb')
-        fileobj3 = open(inputdataFiles[2], 'rb')
+        with open(inputdataFiles[0], 'rb') as image:
+            fileobj1 = image.read()
+        with open(inputdataFiles[1], 'rb') as image:
+            fileobj2 = image.read()
+        with open(inputdataFiles[2], 'rb') as image:
+            fileobj3 = image.read()
         fileobj4 = open(inputdataFiles[3], 'rb')
 
         # 4. Dict of files
