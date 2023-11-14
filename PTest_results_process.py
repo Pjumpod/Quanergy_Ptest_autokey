@@ -105,7 +105,7 @@ class cPTest_results:
 
             # Export csv Data
             results_dataframe = dict_input_raw_data.iloc[1:9, [2, 3]].values
-            results_dataframe = abs(results_dataframe.astype(float))
+            results_dataframe = results_dataframe.astype(float)
             results_dataframe = pd.DataFrame(results_dataframe,
                                                columns=['True_Angle', 'Error'],
                                                index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
