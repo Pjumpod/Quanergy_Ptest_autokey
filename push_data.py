@@ -1,14 +1,15 @@
-import time, re
+import re
 from PTest_results_process import cPTest_results
 from PTest_parser_json import cPTest_parser_json
 from PTest_database import cPTest_database
-from choiseBox import choiseBox
-import pandas as pd
-import platform
 import json
 import tkinter as tk
-from tkinter import simpledialog, messagebox, ttk
+from tkinter import simpledialog, messagebox
 # from Ui_Plot_Dialog import Ui_Plot_Dialog
+# from choiseBox import choiseBox
+# import pandas as pd
+# import platform
+# import time
 
 
 def askQP(subname):
@@ -46,7 +47,7 @@ def askModel():
         "m1edge"
     ]
     master = tk.Tk()
-    promtptext = tk.Text(master, height = 2, width = 52)
+    promtptext = tk.Text(master, height=2, width=52)
     promtptext.insert(tk.INSERT, "What is the QP type?")
     promtptext.pack()
     variable = tk.StringVar(master)
@@ -79,7 +80,7 @@ def askProcess(pmodel):
             "NA"
         ]
     master = tk.Tk()
-    promtptext = tk.Text(master, height = 2, width = 52)
+    promtptext = tk.Text(master, height=2, width=52)
     promtptext.insert(tk.INSERT, "What is the data would like to key to ptest?")
     promtptext.pack()
     variable = tk.StringVar(master)
@@ -94,7 +95,7 @@ def askProcess(pmodel):
         master.withdraw()
         master.destroy()
 
-    button = tk.Button(master, text="OK", command=process_ok, height=2, width=10 )
+    button = tk.Button(master, text="OK", command=process_ok, height=2, width=10)
     button.pack()
     master.wait_window()
     return True
@@ -132,7 +133,7 @@ if __name__ == "__main__":
     dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
     # ptest_dict_static_xml_subprocess = dict_master_process[process_name]
     # print(ptest_dict_static_xml_subprocess)
-    df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name,results_dir_path)
+    df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path)
     # print(x.keys())
     dict_finalDataPacket = {}
     # PREPARE THE DATA FROM SHARED DRIVE - CSV files.
@@ -162,8 +163,3 @@ if __name__ == "__main__":
     else:
         print("PUSH DATA TO PTEST DONE.")
         messagebox.showinfo("PUSH DATA TO PTEST DONE.", "PUSH DATA TO PTEST DONE.")
-
-
-
-
-
