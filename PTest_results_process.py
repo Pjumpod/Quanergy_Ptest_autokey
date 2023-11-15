@@ -44,7 +44,7 @@ class cPTest_results:
                         # logging.info("In mResults_get_input_files() :'List Files in Directory {}".format(get_files_results_qpnum_dir_path))
 
                         # Check get file list from Server Path is not empty
-                        if bool(get_files_results_qpnum_dir_path) == True:
+                        if bool(get_files_results_qpnum_dir_path):
 
                             # 2. Get file list form results_qpnum_dir
                             for result_file_ in get_files_results_qpnum_dir_path:
@@ -94,22 +94,15 @@ class cPTest_results:
             dict_input_raw_data = pd.read_csv(results_file_fullpath, header=None)
         elif ".png" in results_file_fullpath.lower():
             return results_file_fullpath
+        elif ".txt" in results_file_fullpath.lower():
+            dict_input_raw_data = pd.read_csv(results_file_fullpath, header=None, delimiter=":")
         result_file_name = os.path.basename(results_file_fullpath)
         results_dataframe = {}
 
         logging.info("In mResults_map_results_to_ptest():  Result_file_name :{}".format(result_file_name))
-        logging.info("In mResults_map_results_to_ptest():  Result_file raw dataframe : \n {}".format(dict_input_raw_data))
+        print("In mResults_map_results_to_ptest():  Result_file raw dataframe : \n {}".format(dict_input_raw_data))
 
         if bool(re.search("vertical_angle", result_file_name, re.IGNORECASE)):
-
-            # Get Test Result
-            #final_result = dict_input_raw_data.iloc[-1:, [0, 1]].values
-            final_test_result = dict_input_raw_data.iloc[-1:, [1]].values
-            #print("In mResults_map_results_to_ptest . Final Result :{}".format(final_result))
-            row_list = [2, 3]
-            col_list = [1, 2, 3, 4, 5, 6, 7, 8]
-
-            # Export csv Data
             results_dataframe = dict_input_raw_data.iloc[1:9, [2, 3]].values
             results_dataframe = results_dataframe.astype(float)
             results_dataframe = pd.DataFrame(results_dataframe,
@@ -117,12 +110,27 @@ class cPTest_results:
                                                index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
                                                dtype=object)
 
+        elif bool(re.search("range_calibration", subprocess_name, re.IGNORECASE)):
+            results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
+            results_dataframe = results_dataframe.astype(float)
+            results_dataframe = pd.DataFrame(results_dataframe,
+                                               columns=['offset'],
+                                               index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                               dtype=object)
+        elif bool(re.search("encoder_calibration", subprocess_name, re.IGNORECASE)):
+            results_dataframe = dict_input_raw_data.iloc[[1]].values
+            results_dataframe = results_dataframe.astype(float)
+            results_dataframe = pd.DataFrame(results_dataframe,
+                                               columns=['amplitude', 'phase'],
+                                               index=['Results'],
+                                               dtype=object)
+        elif bool(re.search("tnom", subprocess_name, re.IGNORECASE)):
+            results_dataframe = dict_input_raw_data.iloc[8, 1]
+            results_dataframe = results_dataframe.astype(float)
         elif bool(re.search("Power_Calibration_Over_Temperature", subprocess_name, re.IGNORECASE)):
-
             if bool(re.search("_eeprom_config.ini", result_file_name, re.IGNORECASE)):
                 return results_file_fullpath
             else:
-
                 min_limit = 0
                 max_limit = 1000
                 results_dataframe, columns_list = self.validate_Performance_Data(results_file_fullpath, min_limit, max_limit)
@@ -134,6 +142,7 @@ class cPTest_results:
             logging.error("In mResults_map_results_to_ptest,  Result_file raw dataframe :{} is failed to Parse".format(results_dataframe))
             # raise SystemExit()
 
+        print("In mResults_map_results_to_ptest():  Result_file raw dataframe : \n {}".format(dict_input_raw_data))
         return results_dataframe
 
     def validate_Performance_Data(self, data_file_path, min_limit, max_limit):

@@ -70,7 +70,8 @@ def askProcess(pmodel):
         OPTIONS = [
             "Alignment => Vertical_Angle",
             "Performance_Test => Receiver_Peak_Test",
-            "Performance_Test => Power_Calibration_Over_Temperature"
+            "Performance_Test => Power_Calibration_Over_Temperature",
+            "Final_Test => Range_Calibration"
         ]
     elif pmodel == "m1edge":
         OPTIONS = [
@@ -128,10 +129,9 @@ if __name__ == "__main__":
     ptestHandler = cPTest_database(serial_num, username, password, ptest_server_path, model)
     parser = cPTest_parser_json(process_name, subprocess_name)
     dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
-    # ptest_dict_static_xml_subprocess = dict_master_process[process_name]
-    # print(ptest_dict_static_xml_subprocess)
+
     df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path)
-    # print(x.keys())
+
     dict_finalDataPacket = {}
     # PREPARE THE DATA FROM SHARED DRIVE - CSV files.
     if bool(re.search("Performance_Test", process_name, re.IGNORECASE)):
@@ -150,6 +150,45 @@ if __name__ == "__main__":
         print(message)
         # PUSH data
         push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
+    elif "Range_Calibration" in subprocess_name:
+        dict_raw_data_values = df_dict_raw_data.values()
+        parser = cPTest_parser_json(process_name, subprocess_name)
+        dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
+                                                                       (list(dict_raw_data_values)[0]))
+        message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
+        print(message)
+        push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
+        if push_return['err'] != '':
+            messagebox.showerror("ERROR", "KEY DATA TO PTEST IS ERROR " + str(push_return['err']))
+            exit(1)
+        subprocess_name = "TNOM"
+        print("=== Input for {} process ===".format(subprocess_name))
+        dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
+        df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path)
+        dict_raw_data_values = df_dict_raw_data.values()
+        parser = cPTest_parser_json(process_name, subprocess_name)
+        dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
+                                                                       (list(dict_raw_data_values)[0]))
+        message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
+        print(message)
+        push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
+        if push_return['err'] != '':
+            messagebox.showerror("ERROR", "KEY DATA TO PTEST IS ERROR " + str(push_return['err']))
+            exit(1)
+        subprocess_name = "Encoder_Calibration"
+        print("=== Input for {} process ===".format(subprocess_name))
+        dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
+        df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path)
+        dict_raw_data_values = df_dict_raw_data.values()
+        parser = cPTest_parser_json(process_name, subprocess_name)
+        dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
+                                                                       (list(dict_raw_data_values)[0]))
+        message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
+        print(message)
+        push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
+    else:
+        print('station not in the list')
+        exit(1)
     print("result = ", push_return['err'])
     if push_return['err'] != '':
         messagebox.showerror("ERROR", "KEY DATA TO PTEST IS ERROR " + str(push_return['err']))

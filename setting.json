@@ -4,5 +4,8 @@
   "_comment1_" : "Below is File format name for each station",
   "Vertical_Angle" : "_vertical_angle.csv",
   "Power_Calibration_Over_Temperature" : "_RAW0.png,_RAW1.png,_RAW2.png,_eeprom_config.ini",
-  "Receiver_Peak_Test" : "_rx.csv"
+  "Receiver_Peak_Test" : "_rx.csv",
+  "Range_Calibration" : "cal_offsets.txt",
+  "TNOM" : "cal_offsets.txt",
+  "Encoder_Calibration" : "_encoder_cal.csv"
 }
