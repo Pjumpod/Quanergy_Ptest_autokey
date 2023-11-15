@@ -1,5 +1,5 @@
-import sys
 import logging
+
 
 class cPTest_parser_json:
 
@@ -113,9 +113,6 @@ class cPTest_parser_json:
                 # QMessageBox.information(QMessageBox(), "Info", "Parser failed to parse Master File")
                 #raise PTest_common.CustomException(1, "In mPTest_parser_json_file(): Json file failed processed")
 
-        except PTest_common.cCustomException as error:
-            raise error
-
         except Exception as error:
             raise error
 
@@ -197,8 +194,6 @@ class cPTest_parser_json:
                 # raise PTest_common.CustomException(1, "mPTest_parser_create_data_packet() : Failed to SubProcess")
                 #raise
 
-        except PTest_common.cCustomException as error:
-            raise error
         except Exception as error:
             logging.error("In mPTest_parser_create_data_packet(): Error:{}", error)
             # QMessageBox.information(QMessageBox(), "Info", "Error:{}".format(error))
@@ -214,9 +209,11 @@ class cPTest_parser_json:
             for ij, j in enumerate(dict_final_data_packet[i]):
                 print(i, " - ", j, " : ")
                 print(dict_input_raw_data[j][i])
+                if str(dict_input_raw_data[j][i]) == "-0.0":
+                    dict_input_raw_data[j][i] = "0.0"
                 dict_final_data_packet[i][j]['value'] = dict_input_raw_data[j][i]
 
-        logging.info("In mPTest_fill_data_packet():  Dictionary of Final Data Packet", dict_final_data_packet)
+        print("In mPTest_fill_data_packet():  Dictionary of Final Data Packet", dict_final_data_packet)
 
         return dict_final_data_packet
 
