@@ -3,5 +3,6 @@
   "linux_path" : "/data/D5_sensor_list",
   "_comment1_" : "Below is File format name for each station",
   "Vertical_Angle" : "_vertical_angle.csv",
-  "Power_Calibration_Over_Temperature" : "_RAW0.png,_RAW1.png,_RAW2.png,_eeprom_config.ini"
+  "Power_Calibration_Over_Temperature" : "_RAW0.png,_RAW1.png,_RAW2.png,_eeprom_config.ini",
+  "Receiver_Peak_Test" : "_rx.csv"
 }

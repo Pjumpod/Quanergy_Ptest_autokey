@@ -320,6 +320,7 @@ class cPTest_database:
     def mPTest_database_post_file(self, process_name, subprocess_name, inputdataFiles):
 
         # logger = cPtest_log.logger()
+
         message = "In mPTest_database_post_data_file() : Push JSON File to PTest"
         print(message)
         logging.info(message)
@@ -328,42 +329,58 @@ class cPTest_database:
         #ptest_push_path = 'http://ptest-stage.corp.quanergy.com/m1/automate/updateprocessdata/' + "QP4A8B" + '/'
         message = "In mPTest_database_post_data_file(): path:{}".format(ptest_push_path)
         print(message)
-
-        # 1. Format Json data
-        json_data = {
-            "user": self.username, "pwd": self.password,
-            "process_data": {
-                process_name: {
-                    "Generate_Ini": {"value": "file4", "spec_bool": 1},
-                    subprocess_name:
-                        {"Plots": {"Raw0": {"value": "file1", "spec_bool": 1},
-                                   "Raw1": {"value": "file2", "spec_bool": 1},
-                                   "Raw2": {"value": "file3", "spec_bool": 1}}
-                         }
+        one_file_json = {
+                "user": self.username, "pwd": self.password,
+                "process_data": {
+                    process_name: {
+                        subprocess_name: {"value": "file1", "spec_bool": 1},
+                    }
                 }
             }
-        }
 
-        # 2. Create Json data dict
-        json_dict = {'data': json.dumps(json_data)}
+        if "Power_Calibration_Over_Temperature" in subprocess_name:
+            # 1. Format Json data
+            json_data = {
+                "user": self.username, "pwd": self.password,
+                "process_data": {
+                    process_name: {
+                        "Generate_Ini": {"value": "file4", "spec_bool": 1},
+                        subprocess_name:
+                            {"Plots": {"Raw0": {"value": "file1", "spec_bool": 1},
+                                       "Raw1": {"value": "file2", "spec_bool": 1},
+                                       "Raw2": {"value": "file3", "spec_bool": 1}}
+                             }
+                    }
+                }
+            }
 
-        # 3. Create File Handlers
-        with open(inputdataFiles[0], 'rb') as image:
-            fileobj1 = image.read()
-        with open(inputdataFiles[1], 'rb') as image:
-            fileobj2 = image.read()
-        with open(inputdataFiles[2], 'rb') as image:
-            fileobj3 = image.read()
-        fileobj4 = open(inputdataFiles[3], 'rb')
+            # 2. Create Json data dict
+            json_dict = {'data': json.dumps(json_data)}
 
-        # 4. Dict of files
-        files = {'file1': ""}
-        files = {
-            'file1': (inputdataFiles[0], fileobj1),
-            'file2': (inputdataFiles[1], fileobj2),
-            'file3': (inputdataFiles[2], fileobj3),
-            'file4': (inputdataFiles[3], fileobj4),
-        }
+            # 3. Create File Handlers
+            with open(inputdataFiles[0], 'rb') as image:
+                fileobj1 = image.read()
+            with open(inputdataFiles[1], 'rb') as image:
+                fileobj2 = image.read()
+            with open(inputdataFiles[2], 'rb') as image:
+                fileobj3 = image.read()
+            fileobj4 = open(inputdataFiles[3], 'rb')
+
+            # 4. Dict of files
+            files = {'file1': ""}
+            files = {
+                'file1': (inputdataFiles[0], fileobj1),
+                'file2': (inputdataFiles[1], fileobj2),
+                'file3': (inputdataFiles[2], fileobj3),
+                'file4': (inputdataFiles[3], fileobj4),
+            }
+        elif "Receiver_Peak_Test" in subprocess_name:
+            json_data = one_file_json
+            json_dict = {'data': json.dumps(json_data)}
+            fileobj1 = open(inputdataFiles[0], 'rb')
+            files = {
+                'file1': (inputdataFiles[0], fileobj1)
+            }
 
         # 5.Push Json Data to PTest
         if self.mPTest_database_check_connection() == 200:

@@ -18,12 +18,8 @@ def askQP(subname):
         sn = simpledialog.askstring("Question", "Enter your qpnum: ")
         if sn is None:
             sn = "xx"
-    if "Vertical_Angle" in subname:
-        sn = sn.upper()
-    elif "Power_Calibration_Over_Temperature" in subname:
-        sn = sn.upper()
-    else:
-        sn = sn.lower()
+    sn = sn.upper()
+
     return sn
 
 
@@ -73,6 +69,7 @@ def askProcess(pmodel):
     if pmodel == "m8prime":
         OPTIONS = [
             "Alignment => Vertical_Angle",
+            "Performance_Test => Receiver_Peak_Test",
             "Performance_Test => Power_Calibration_Over_Temperature"
         ]
     elif pmodel == "m1edge":
@@ -144,12 +141,8 @@ if __name__ == "__main__":
         files_list = list(df_dict_raw_data.keys())
         # PUSH FILE
         push_return = ptestHandler.mPTest_database_post_file(process_name, subprocess_name, files_list)
-    else:
-
-        # 4. Parser both process and sub-process . Creates final process packet dictionary . Fills Data Packet
-        #  To index into dict , convert dict to list of values
+    elif "Vertical_Angle" in subprocess_name:
         dict_raw_data_values = df_dict_raw_data.values()
-        # print("Last input before parse: {}".format(dict_raw_data_values))
         parser = cPTest_parser_json(process_name, subprocess_name)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
