@@ -326,7 +326,7 @@ class cPTest_database:
         logging.info(message)
 
         ptest_push_path = self.mPTest_database_post_path()
-        #ptest_push_path = 'http://ptest-stage.corp.quanergy.com/m1/automate/updateprocessdata/' + "QP4A8B" + '/'
+        # ptest_push_path = 'http://ptest-stage.corp.quanergy.com/m1/automate/updateprocessdata/' + "QP4A8B" + '/'
         message = "In mPTest_database_post_data_file(): path:{}".format(ptest_push_path)
         print(message)
         one_file_json = {

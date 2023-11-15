@@ -186,6 +186,20 @@ if __name__ == "__main__":
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
         print(message)
         push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
+        if push_return['err'] != '':
+            messagebox.showerror("ERROR", "KEY DATA TO PTEST IS ERROR " + str(push_return['err']))
+            exit(1)
+        subprocess_name = "Min_Range"
+        print("=== Input for {} process ===".format(subprocess_name))
+        dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
+        df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path)
+        dict_raw_data_values = df_dict_raw_data.values()
+        parser = cPTest_parser_json(process_name, subprocess_name)
+        dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
+                                                                       (list(dict_raw_data_values)[0]))
+        message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
+        print(message)
+        push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
     else:
         print('station not in the list')
         exit(1)

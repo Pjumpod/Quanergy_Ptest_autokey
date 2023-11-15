@@ -7,5 +7,6 @@
   "Receiver_Peak_Test" : "_rx.csv",
   "Range_Calibration" : "cal_offsets.txt",
   "TNOM" : "cal_offsets.txt",
-  "Encoder_Calibration" : "_encoder_cal.csv"
+  "Encoder_Calibration" : "_encoder_cal.csv",
+  "Min_Range" : "_min_range.csv"
 }

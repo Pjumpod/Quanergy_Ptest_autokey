@@ -207,8 +207,8 @@ class cPTest_parser_json:
         logging.info("In mPTest_fill_data_packet(): Fill JSON FinalProcessPacket with InputDataPacket")
         for ii, i in enumerate(dict_final_data_packet):
             for ij, j in enumerate(dict_final_data_packet[i]):
-                print(i, " - ", j, " : ")
-                print(dict_input_raw_data[j][i])
+                # print(i, " - ", j, " : ")
+                # print(dict_input_raw_data[j][i])
                 if str(dict_input_raw_data[j][i]) == "-0.0":
                     dict_input_raw_data[j][i] = "0.0"
                 dict_final_data_packet[i][j]['value'] = dict_input_raw_data[j][i]

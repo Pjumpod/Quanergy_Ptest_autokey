@@ -1,7 +1,7 @@
 import os, glob, sys
 import re, logging
 import pandas as pd
-
+from io import StringIO
 import PTest_setup as setup
 import platform
 import json
@@ -90,7 +90,18 @@ class cPTest_results:
         dict_input_raw_data = ""
         if subprocess_name == "Power_Calibration_Over_Temperature":
             return results_file_fullpath
-        if ".csv" in results_file_fullpath.lower():
+        if "min_range" in subprocess_name.lower():
+            f = open(results_file_fullpath, 'r')
+            lines = f.readlines()[1:]
+            f.close()
+            tmpstr = lines[0]
+            tmpstr = tmpstr.replace("\"[", "").replace("]\"", "_")
+            tmpstr = tmpstr.replace("_,", "\n\r")
+            tmpstr = tmpstr.replace("_", "\n\r").replace("\'", "")
+            strIO = StringIO(tmpstr)
+            dict_input_raw_data = pd.read_csv(strIO, header=None)
+            # dict_input_raw_data = pd.read_csv(results_file_fullpath, header=None, skiprows=0)
+        elif ".csv" in results_file_fullpath.lower():
             dict_input_raw_data = pd.read_csv(results_file_fullpath, header=None)
         elif ".png" in results_file_fullpath.lower():
             return results_file_fullpath
@@ -123,6 +134,13 @@ class cPTest_results:
             results_dataframe = pd.DataFrame(results_dataframe,
                                                columns=['amplitude', 'phase'],
                                                index=['Results'],
+                                               dtype=object)
+        elif bool(re.search("min_range", subprocess_name, re.IGNORECASE)):
+            results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
+            results_dataframe = results_dataframe.astype(float)
+            results_dataframe = pd.DataFrame(results_dataframe,
+                                               columns=['min_distance'],
+                                               index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
                                                dtype=object)
         elif bool(re.search("tnom", subprocess_name, re.IGNORECASE)):
             results_dataframe = dict_input_raw_data.iloc[8, 1]
