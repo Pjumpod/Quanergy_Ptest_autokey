@@ -95,26 +95,15 @@ class cPTest_results:
         if subprocess_name == "Power_Calibration_Over_Temperature":
             return results_file_fullpath
         if "min_range" in subprocess_name.lower():
-            if model_type == "m8prime":
-                f = open(results_file_fullpath, 'r')
-                lines = f.readlines()[1:]
-                f.close()
-                tmpstr = lines[0]
-                tmpstr = tmpstr.replace("\"[", "").replace("]\"", "_")
-                tmpstr = tmpstr.replace("_,", "\n\r")
-                tmpstr = tmpstr.replace("_", "\n\r").replace("\'", "")
-                strIO = StringIO(tmpstr)
-                dict_input_raw_data = pd.read_csv(strIO, header=None)
-            if model_type == "m1edge":
-                f = open(results_file_fullpath, 'r')
-                lines = f.readlines()[1:]
-                f.close()
-                tmpstr = lines[0]
-                tmpstr = tmpstr.replace("\"[", "").replace("]\"", "_")
-                tmpstr = tmpstr.replace("_,", "\n\r")
-                tmpstr = tmpstr.replace("_", "\n\r").replace("\'", "")
-                strIO = StringIO(tmpstr)
-                dict_input_raw_data = pd.read_csv(strIO, header=None)
+            f = open(results_file_fullpath, 'r')
+            lines = f.readlines()[1:]
+            f.close()
+            tmpstr = lines[0]
+            tmpstr = tmpstr.replace("\"[", "").replace("]\"", "_")
+            tmpstr = tmpstr.replace("_,", "\n\r")
+            tmpstr = tmpstr.replace("_", "\n\r").replace("\'", "")
+            strIO = StringIO(tmpstr)
+            dict_input_raw_data = pd.read_csv(strIO, header=None)
         elif "noise_test" in subprocess_name.lower():
             if model_type == "m8prime":
                 f = open(results_file_fullpath, 'r')
