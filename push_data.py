@@ -130,9 +130,10 @@ if __name__ == "__main__":
     parser = cPTest_parser_json(process_name, subprocess_name)
     dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
 
-    df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path)
+    df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
 
     dict_finalDataPacket = {}
+    push_return = {'err' : ''}
     # PREPARE THE DATA FROM SHARED DRIVE - CSV files.
     if bool(re.search("Performance_Test", process_name, re.IGNORECASE)):
         # Pop up Dialog for Plot dataframes
@@ -164,7 +165,7 @@ if __name__ == "__main__":
         subprocess_name = "TNOM"
         print("=== Input for {} process ===".format(subprocess_name))
         dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
-        df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path)
+        df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
         dict_raw_data_values = df_dict_raw_data.values()
         parser = cPTest_parser_json(process_name, subprocess_name)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
@@ -178,7 +179,7 @@ if __name__ == "__main__":
         subprocess_name = "Encoder_Calibration"
         print("=== Input for {} process ===".format(subprocess_name))
         dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
-        df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path)
+        df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
         dict_raw_data_values = df_dict_raw_data.values()
         parser = cPTest_parser_json(process_name, subprocess_name)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
@@ -192,7 +193,21 @@ if __name__ == "__main__":
         subprocess_name = "Min_Range"
         print("=== Input for {} process ===".format(subprocess_name))
         dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
-        df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path)
+        df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
+        dict_raw_data_values = df_dict_raw_data.values()
+        parser = cPTest_parser_json(process_name, subprocess_name)
+        dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
+                                                                       (list(dict_raw_data_values)[0]))
+        message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
+        print(message)
+        push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
+        if push_return['err'] != '':
+            messagebox.showerror("ERROR", "KEY DATA TO PTEST IS ERROR " + str(push_return['err']))
+            exit(1)
+        subprocess_name = "Noise_Test"
+        print("=== Input for {} process ===".format(subprocess_name))
+        dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
+        df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
         dict_raw_data_values = df_dict_raw_data.values()
         parser = cPTest_parser_json(process_name, subprocess_name)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,

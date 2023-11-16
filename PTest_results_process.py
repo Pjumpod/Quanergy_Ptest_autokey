@@ -1,15 +1,17 @@
-import os, glob, sys
-import re, logging
+import os
+import glob
+import re
+import logging
 import pandas as pd
 from io import StringIO
-import PTest_setup as setup
 import platform
 import json
+from tkinter import messagebox
 
 
 class cPTest_results:
 
-    def mResults_get_input_files(self, subprocess_name, results_dir_path):
+    def mResults_get_input_files(self, subprocess_name, results_dir_path, model_type):
 
         logging.info("==============================================================")
         logging.info("In mResults_get_input_files() : Get Results Files from Server ")
@@ -50,7 +52,7 @@ class cPTest_results:
                             for result_file_ in get_files_results_qpnum_dir_path:
                                 print("In mResults_get_input_files() :'Get Each result_File in List {}".format(result_file_))
                                 # Each raw file converted to ptest json process DataFrame
-                                results_dataframe = self.mResults_map_results_to_ptest(result_file_, subprocess_name)
+                                results_dataframe = self.mResults_map_results_to_ptest(result_file_, subprocess_name, model_type)
                                 results_list_of_dataframe_dictionary[result_file_] = results_dataframe
                         else:
                             logging.error("In mResults_get_input_files() :'Result file do not exist in the Server Path .")
@@ -84,23 +86,45 @@ class cPTest_results:
 
         return setting[subprocess_name]
 
-    def mResults_map_results_to_ptest(self, results_file_fullpath, subprocess_name):
+    def mResults_map_results_to_ptest(self, results_file_fullpath, subprocess_name, model_type):
 
         # Convert each csv file to dataframe
         dict_input_raw_data = ""
         if subprocess_name == "Power_Calibration_Over_Temperature":
             return results_file_fullpath
         if "min_range" in subprocess_name.lower():
-            f = open(results_file_fullpath, 'r')
-            lines = f.readlines()[1:]
-            f.close()
-            tmpstr = lines[0]
-            tmpstr = tmpstr.replace("\"[", "").replace("]\"", "_")
-            tmpstr = tmpstr.replace("_,", "\n\r")
-            tmpstr = tmpstr.replace("_", "\n\r").replace("\'", "")
-            strIO = StringIO(tmpstr)
-            dict_input_raw_data = pd.read_csv(strIO, header=None)
-            # dict_input_raw_data = pd.read_csv(results_file_fullpath, header=None, skiprows=0)
+            if model_type == "m8prime":
+                f = open(results_file_fullpath, 'r')
+                lines = f.readlines()[1:]
+                f.close()
+                tmpstr = lines[0]
+                tmpstr = tmpstr.replace("\"[", "").replace("]\"", "_")
+                tmpstr = tmpstr.replace("_,", "\n\r")
+                tmpstr = tmpstr.replace("_", "\n\r").replace("\'", "")
+                strIO = StringIO(tmpstr)
+                dict_input_raw_data = pd.read_csv(strIO, header=None)
+        elif "noise_test" in subprocess_name.lower():
+            if model_type == "m8prime":
+                f = open(results_file_fullpath, 'r')
+                lines = f.readlines()[1:]
+                f.close()
+                if (len(lines) > 1) and (len(lines[0]) > 1):
+                    messagebox.showerror("ERROR", "Noise Test ไม่ถูก key ข้อมูล => ติดต่อ จุมภฏ \n\r\n\r"
+                                                  "Noise Test is not key yet, Contract Jumpod \n\r\n\r"
+                                                  "Tel : 083-768-7507")
+                    return results_file_fullpath
+                strIO = StringIO("""0,0
+                1,0
+                2,0
+                3,0
+                4,0
+                5,0
+                6,0
+                7,0""")
+                dict_input_raw_data = pd.read_csv(strIO, header=None)
+                # print("Data :", lines)
+                # print("Len : ", len(lines))
+                # print("LEN0 :", len(lines[0]))
         elif ".csv" in results_file_fullpath.lower():
             dict_input_raw_data = pd.read_csv(results_file_fullpath, header=None)
         elif ".png" in results_file_fullpath.lower():
@@ -114,48 +138,50 @@ class cPTest_results:
         print("In mResults_map_results_to_ptest():  Result_file raw dataframe : \n {}".format(dict_input_raw_data))
 
         if bool(re.search("vertical_angle", result_file_name, re.IGNORECASE)):
-            results_dataframe = dict_input_raw_data.iloc[1:9, [2, 3]].values
-            results_dataframe = results_dataframe.astype(float)
-            results_dataframe = pd.DataFrame(results_dataframe,
-                                               columns=['True_Angle', 'Error'],
-                                               index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
-                                               dtype=object)
+            if model_type == "m8prime":
+                results_dataframe = dict_input_raw_data.iloc[1:9, [2, 3]].values
+                results_dataframe = results_dataframe.astype(float)
+                results_dataframe = pd.DataFrame(results_dataframe,
+                                                   columns=['True_Angle', 'Error'],
+                                                   index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                                   dtype=object)
 
         elif bool(re.search("range_calibration", subprocess_name, re.IGNORECASE)):
-            results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
-            results_dataframe = results_dataframe.astype(float)
-            results_dataframe = pd.DataFrame(results_dataframe,
-                                               columns=['offset'],
-                                               index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
-                                               dtype=object)
-        elif bool(re.search("encoder_calibration", subprocess_name, re.IGNORECASE)):
-            results_dataframe = dict_input_raw_data.iloc[[1]].values
-            results_dataframe = results_dataframe.astype(float)
-            results_dataframe = pd.DataFrame(results_dataframe,
-                                               columns=['amplitude', 'phase'],
-                                               index=['Results'],
-                                               dtype=object)
-        elif bool(re.search("min_range", subprocess_name, re.IGNORECASE)):
-            results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
-            results_dataframe = results_dataframe.astype(float)
-            results_dataframe = pd.DataFrame(results_dataframe,
-                                               columns=['min_distance'],
-                                               index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
-                                               dtype=object)
-        elif bool(re.search("tnom", subprocess_name, re.IGNORECASE)):
-            results_dataframe = dict_input_raw_data.iloc[8, 1]
-            results_dataframe = results_dataframe.astype(float)
-        elif bool(re.search("Power_Calibration_Over_Temperature", subprocess_name, re.IGNORECASE)):
-            if bool(re.search("_eeprom_config.ini", result_file_name, re.IGNORECASE)):
-                return results_file_fullpath
-            else:
-                min_limit = 0
-                max_limit = 1000
-                results_dataframe, columns_list = self.validate_Performance_Data(results_file_fullpath, min_limit, max_limit)
+            if model_type == "m8prime":
+                results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
+                results_dataframe = results_dataframe.astype(float)
                 results_dataframe = pd.DataFrame(results_dataframe,
-                                                 columns=columns_list,
-                                                 index=results_dataframe['nJ'],
-                                                 dtype=object)
+                                                   columns=['offset'],
+                                                   index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                                   dtype=object)
+        elif bool(re.search("encoder_calibration", subprocess_name, re.IGNORECASE)):
+            if model_type == "m8prime":
+                results_dataframe = dict_input_raw_data.iloc[[1]].values
+                results_dataframe = results_dataframe.astype(float)
+                results_dataframe = pd.DataFrame(results_dataframe,
+                                                   columns=['amplitude', 'phase'],
+                                                   index=['Results'],
+                                                   dtype=object)
+        elif bool(re.search("min_range", subprocess_name, re.IGNORECASE)):
+            if model_type == "m8prime":
+                results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
+                results_dataframe = results_dataframe.astype(float)
+                results_dataframe = pd.DataFrame(results_dataframe,
+                                                   columns=['min_distance'],
+                                                   index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                                   dtype=object)
+        elif bool(re.search("noise_test", subprocess_name, re.IGNORECASE)):
+            if model_type == "m8prime":
+                results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
+                results_dataframe = results_dataframe.astype(float)
+                results_dataframe = pd.DataFrame(results_dataframe,
+                                                   columns=['points'],
+                                                   index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                                   dtype=object)
+        elif bool(re.search("tnom", subprocess_name, re.IGNORECASE)):
+            if model_type == "m8prime":
+                results_dataframe = dict_input_raw_data.iloc[8, 1]
+                results_dataframe = results_dataframe.astype(float)
         else:
             logging.error("In mResults_map_results_to_ptest,  Result_file raw dataframe :{} is failed to Parse".format(results_dataframe))
             # raise SystemExit()

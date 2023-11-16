@@ -211,6 +211,8 @@ class cPTest_parser_json:
                 # print(dict_input_raw_data[j][i])
                 if str(dict_input_raw_data[j][i]) == "-0.0":
                     dict_input_raw_data[j][i] = "0.0"
+                if str(dict_input_raw_data[j][i]) == "0.0":
+                    dict_input_raw_data[j][i] = "0"
                 dict_final_data_packet[i][j]['value'] = dict_input_raw_data[j][i]
 
         print("In mPTest_fill_data_packet():  Dictionary of Final Data Packet", dict_final_data_packet)
