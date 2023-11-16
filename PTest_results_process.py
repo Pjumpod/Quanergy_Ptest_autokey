@@ -105,6 +105,16 @@ class cPTest_results:
                 tmpstr = tmpstr.replace("_", "\n\r").replace("\'", "")
                 strIO = StringIO(tmpstr)
                 dict_input_raw_data = pd.read_csv(strIO, header=None)
+            if model_type == "m1edge":
+                f = open(results_file_fullpath, 'r')
+                lines = f.readlines()[1:]
+                f.close()
+                tmpstr = lines[0]
+                tmpstr = tmpstr.replace("\"[", "").replace("]\"", "_")
+                tmpstr = tmpstr.replace("_,", "\n\r")
+                tmpstr = tmpstr.replace("_", "\n\r").replace("\'", "")
+                strIO = StringIO(tmpstr)
+                dict_input_raw_data = pd.read_csv(strIO, header=None)
         elif "noise_test" in subprocess_name.lower():
             if model_type == "m8prime":
                 f = open(results_file_fullpath, 'r')
@@ -127,6 +137,17 @@ class cPTest_results:
                 # print("Data :", lines)
                 # print("Len : ", len(lines))
                 # print("LEN0 :", len(lines[0]))
+            if model_type == "m1edge":
+                f = open(results_file_fullpath, 'r')
+                lines = f.readlines()[1:]
+                f.close()
+                print("LEN0 :", len(lines[0].strip()))
+                if len(lines[0].strip()) == 0:
+                    lines[0] = "0"
+                else:
+                    lines[0] = lines[0].strip()
+                strIO = StringIO("0," + lines[0])
+                dict_input_raw_data = pd.read_csv(strIO, header=None)
         elif ".csv" in results_file_fullpath.lower():
             dict_input_raw_data = pd.read_csv(results_file_fullpath, header=None)
         elif ".png" in results_file_fullpath.lower():
@@ -156,14 +177,23 @@ class cPTest_results:
                                                    columns=['offset'],
                                                    index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
                                                    dtype=object)
-        elif bool(re.search("encoder_calibration", subprocess_name, re.IGNORECASE)):
-            if model_type == "m8prime":
-                results_dataframe = dict_input_raw_data.iloc[[1]].values
+            if model_type == "m1edge":
+                results_dataframe = dict_input_raw_data.iloc[6, 1]
                 results_dataframe = results_dataframe.astype(float)
+
+        elif bool(re.search("encoder_calibration", subprocess_name, re.IGNORECASE)):
+            results_dataframe = dict_input_raw_data.iloc[[1]].values
+            results_dataframe = results_dataframe.astype(float)
+            if model_type == "m8prime":
                 results_dataframe = pd.DataFrame(results_dataframe,
-                                                   columns=['amplitude', 'phase'],
-                                                   index=['Results'],
-                                                   dtype=object)
+                                                columns=['amplitude', 'phase'],
+                                                index=['Results'],
+                                                dtype=object)
+            if model_type == "m1edge":
+                results_dataframe = pd.DataFrame(results_dataframe,
+                                                columns=['Amplitude', 'Phase'],
+                                                index=['Results'],
+                                                dtype=object)
         elif bool(re.search("min_range", subprocess_name, re.IGNORECASE)):
             if model_type == "m8prime":
                 results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
@@ -172,6 +202,10 @@ class cPTest_results:
                                                    columns=['min_distance'],
                                                    index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
                                                    dtype=object)
+            if model_type == "m1edge":
+                results_dataframe = dict_input_raw_data.iloc[0, 1]
+                results_dataframe = results_dataframe.astype(float)
+
         elif bool(re.search("noise_test", subprocess_name, re.IGNORECASE)):
             if model_type == "m8prime":
                 results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
@@ -180,10 +214,13 @@ class cPTest_results:
                                                    columns=['points'],
                                                    index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
                                                    dtype=object)
-        elif bool(re.search("tnom", subprocess_name, re.IGNORECASE)):
-            if model_type == "m8prime":
-                results_dataframe = dict_input_raw_data.iloc[8, 1]
+            if model_type == "m1edge":
+                results_dataframe = dict_input_raw_data.iloc[0, 1]
                 results_dataframe = results_dataframe.astype(float)
+
+        elif bool(re.search("tnom", subprocess_name, re.IGNORECASE)):
+            results_dataframe = dict_input_raw_data.iloc[8, 1]
+            results_dataframe = results_dataframe.astype(float)
         else:
             logging.error("In mResults_map_results_to_ptest,  Result_file raw dataframe :{} is failed to Parse".format(results_dataframe))
             # raise SystemExit()

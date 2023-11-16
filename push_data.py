@@ -79,7 +79,8 @@ def askProcess(pmodel):
         ]
     elif pmodel == "m1edge":
         OPTIONS = [
-            "Performance_Test => Power_Calibration_Over_Temperature"
+            "Performance_Test => Power_Calibration_Over_Temperature",
+            "Final_Test => Range_Calibration"
         ]
     master = tk.Tk()
     promtptext = tk.Text(master, height=2, width=52)
