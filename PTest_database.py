@@ -317,7 +317,7 @@ class cPTest_database:
 
         return post_status.json()
 
-    def mPTest_database_post_file(self, process_name, subprocess_name, inputdataFiles):
+    def mPTest_database_post_file(self, process_name, subprocess_name, inputdataFiles, model):
 
         # logger = cPtest_log.logger()
 
@@ -340,19 +340,34 @@ class cPTest_database:
 
         if "Power_Calibration_Over_Temperature" in subprocess_name:
             # 1. Format Json data
-            json_data = {
-                "user": self.username, "pwd": self.password,
-                "process_data": {
-                    process_name: {
-                        "Generate_Ini": {"value": "file4", "spec_bool": 1},
-                        subprocess_name:
-                            {"Plots": {"Raw0": {"value": "file1", "spec_bool": 1},
-                                       "Raw1": {"value": "file2", "spec_bool": 1},
-                                       "Raw2": {"value": "file3", "spec_bool": 1}}
-                             }
+            if model == "m8prime":
+                json_data = {
+                    "user": self.username, "pwd": self.password,
+                    "process_data": {
+                        process_name: {
+                            "Generate_Ini": {"value": "file4", "spec_bool": 1},
+                            subprocess_name:
+                                {"Plots": {"Raw0": {"value": "file1", "spec_bool": 1},
+                                           "Raw1": {"value": "file2", "spec_bool": 1},
+                                           "Raw2": {"value": "file3", "spec_bool": 1}}
+                                 }
+                        }
                     }
                 }
-            }
+            elif model == "m1edge":
+                json_data = {
+                    "user": self.username, "pwd": self.password,
+                    "process_data": {
+                        process_name: {
+                            "Generate_Ini": {"Beam7": "file4"},
+                            subprocess_name:
+                                {"Plots": {"Raw0": {"value": "file1", "spec_bool": 1},
+                                           "Raw1": {"value": "file2", "spec_bool": 1},
+                                           "Raw2": {"value": "file3", "spec_bool": 1}}
+                                 }
+                        }
+                    }
+                }
 
             # 2. Create Json data dict
             json_dict = {'data': json.dumps(json_data)}

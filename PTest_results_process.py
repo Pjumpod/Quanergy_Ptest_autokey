@@ -42,6 +42,8 @@ class cPTest_results:
                         print("Find files for " + result_file)
                         # 4. Get all files from Results Server(results_qpnum_path) that matches subprocess result filename
                         get_files_results_qpnum_dir_path = glob.glob("".join([results_qpnum_path, "\\*{}".format(result_file)]))
+                        latest_file = max(get_files_results_qpnum_dir_path, key=os.path.getctime)
+                        get_files_results_qpnum_dir_path = {latest_file}
                         print("In mResults_get_input_files() :'List Files in Directory {}".format(get_files_results_qpnum_dir_path))
                         # logging.info("In mResults_get_input_files() :'List Files in Directory {}".format(get_files_results_qpnum_dir_path))
 

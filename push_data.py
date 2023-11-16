@@ -79,7 +79,7 @@ def askProcess(pmodel):
         ]
     elif pmodel == "m1edge":
         OPTIONS = [
-            "NA"
+            "Performance_Test => Power_Calibration_Over_Temperature"
         ]
     master = tk.Tk()
     promtptext = tk.Text(master, height=2, width=52)
@@ -145,7 +145,7 @@ if __name__ == "__main__":
         print("==> File ", df_dict_raw_data.keys())
         files_list = list(df_dict_raw_data.keys())
         # PUSH FILE
-        push_return = ptestHandler.mPTest_database_post_file(process_name, subprocess_name, files_list)
+        push_return = ptestHandler.mPTest_database_post_file(process_name, subprocess_name, files_list, model)
     elif "Vertical_Angle" in subprocess_name:
         dict_raw_data_values = df_dict_raw_data.values()
         parser = cPTest_parser_json(process_name, subprocess_name)
