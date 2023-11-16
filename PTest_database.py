@@ -34,7 +34,7 @@ class cPTest_database:
         # Connection Path
         ptest_connect_path_user = self.ptest_server_path
         message = "In mPTest_database_check_connection(): Server path:{}".format(ptest_connect_path_user)
-        print(message)
+        # print(message)
         logging.info(message)
 
         # Check Connection to PTest
