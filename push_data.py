@@ -17,7 +17,8 @@ def askQP(subname):
     while (len(sn) != 6) or (sn[:2].upper() != "QP"):
         sn = simpledialog.askstring("Question", "Enter your qpnum: ")
         if sn is None:
-            sn = "xx"
+            messagebox.showerror("quit", "User cancel")
+            quit(0)
     sn = sn.upper()
 
     return sn
@@ -28,6 +29,9 @@ def askAccount():
     user_name = ""
     while len(pwd) < 3:
         user_name = simpledialog.askstring("Question", "Enter your ptest username: ")
+        if user_name is None:
+            messagebox.showerror("quit", "User cancel")
+            quit(0)
         with open("user.json", "r") as read_file:
             user = json.load(read_file)
         accounts = user["employees"]
