@@ -75,12 +75,14 @@ def askProcess(pmodel):
             "Alignment => Vertical_Angle",
             "Performance_Test => Receiver_Peak_Test",
             "Performance_Test => Power_Calibration_Over_Temperature",
-            "Final_Test => Range_Calibration"
+            "Final_Test => Range_Calibration",
+            "Final_Test => Accuracy_Test"
         ]
     elif pmodel == "m1edge":
         OPTIONS = [
             "Performance_Test => Power_Calibration_Over_Temperature",
-            "Final_Test => Range_Calibration"
+            "Final_Test => Range_Calibration",
+            "Final_Test => Accuracy_Test"
         ]
     master = tk.Tk()
     promtptext = tk.Text(master, height=2, width=52)
@@ -147,6 +149,8 @@ if __name__ == "__main__":
         files_list = list(df_dict_raw_data.keys())
         # PUSH FILE
         push_return = ptestHandler.mPTest_database_post_file(process_name, subprocess_name, files_list, model)
+    elif "Accuracy_Test" in subprocess_name:
+        messagebox.askyesno("Review DATA", "This data will push to ptest \n\r {}".format(df_dict_raw_dataA))
     elif "Vertical_Angle" in subprocess_name:
         dict_raw_data_values = df_dict_raw_data.values()
         parser = cPTest_parser_json(process_name, subprocess_name)

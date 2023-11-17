@@ -7,5 +7,6 @@
     {"username":"pphiokliang", "password":"letmein123"},
     {"username":"sthoboot", "password":"letmein123"},
     {"username":"rphuthonmit", "password":"letmein123"}
-]
+],
+    "Accuracy_Test" : ".csv"
 }

@@ -2,11 +2,14 @@ import os
 import glob
 import re
 import logging
+
+import pandas
 import pandas as pd
 from io import StringIO
 import platform
 import json
 from tkinter import messagebox
+from datetime import datetime
 
 
 class cPTest_results:
@@ -19,6 +22,8 @@ class cPTest_results:
         # print("AP0")
         get_files_results_static_process_file_str = self.mResults_list_static_xml_process(subprocess_name)
         # print(get_files_results_static_process_file_str)
+        if "accuracy_test" in subprocess_name.lower():
+            results_dir_path = os.path.join(results_dir_path, 'accuracy_test_data/')
         results_qpnum_path = results_dir_path # os.path.join(results_dir_path, qpnum + '/')
         print("In mResults_get_input_files() :'Results Server Path {}".format(results_qpnum_path))
         print("In mResults_get_input_files() :'Results static dictionary {}".format(get_files_results_static_process_file_str))
@@ -42,20 +47,39 @@ class cPTest_results:
                         print("Find files for " + result_file)
                         # 4. Get all files from Results Server(results_qpnum_path) that matches subprocess result filename
                         get_files_results_qpnum_dir_path = glob.glob("".join([results_qpnum_path, "\\*{}".format(result_file)]))
-                        latest_file = max(get_files_results_qpnum_dir_path, key=os.path.getctime)
-                        get_files_results_qpnum_dir_path = {latest_file}
+                        if "accuracy_test" in subprocess_name.lower():
+                            latest_file = max(get_files_results_qpnum_dir_path, key=os.path.getmtime)
+                            get_files_results_qpnum_dir_path = [
+                                file for file in glob.glob(results_qpnum_path + '\\*.csv')
+                                if datetime.fromtimestamp(os.path.getmtime(latest_file)).date() == datetime.fromtimestamp(os.path.getmtime(file)).date()
+                            ]
+                        else:
+                            latest_file = max(get_files_results_qpnum_dir_path, key=os.path.getmtime)
+                            get_files_results_qpnum_dir_path = {latest_file}
                         print("In mResults_get_input_files() :'List Files in Directory {}".format(get_files_results_qpnum_dir_path))
                         # logging.info("In mResults_get_input_files() :'List Files in Directory {}".format(get_files_results_qpnum_dir_path))
 
                         # Check get file list from Server Path is not empty
                         if bool(get_files_results_qpnum_dir_path):
-
-                            # 2. Get file list form results_qpnum_dir
-                            for result_file_ in get_files_results_qpnum_dir_path:
-                                print("In mResults_get_input_files() :'Get Each result_File in List {}".format(result_file_))
-                                # Each raw file converted to ptest json process DataFrame
-                                results_dataframe = self.mResults_map_results_to_ptest(result_file_, subprocess_name, model_type)
-                                results_list_of_dataframe_dictionary[result_file_] = results_dataframe
+                            if "accuracy_test" in subprocess_name.lower():
+                                print("In mResults_get_input_files() :'Start with {}".format(get_files_results_qpnum_dir_path[0]))
+                                csv_content = pd.read_csv(get_files_results_qpnum_dir_path[0])
+                                for result_file_ in get_files_results_qpnum_dir_path:
+                                    if result_file_ == get_files_results_qpnum_dir_path[0]:
+                                        pass
+                                    else:
+                                        print("In mResults_get_input_files() :'Concat the file in List {}".format(result_file_))
+                                        csv_content = pd.concat([csv_content, pd.read_csv(result_file_)], ignore_index=True)
+                                print("Merge data before process is \n\r{}".format(csv_content))
+                                results_dataframe = self.mResult_accuracy_process(model_type, csv_content)
+                                results_list_of_dataframe_dictionary["ACC_Test"] = results_dataframe
+                            else:
+                                # 2. Get file list form results_qpnum_dir
+                                for result_file_ in get_files_results_qpnum_dir_path:
+                                    print("In mResults_get_input_files() :'Get Each result_File in List {}".format(result_file_))
+                                    # Each raw file converted to ptest json process DataFrame
+                                    results_dataframe = self.mResults_map_results_to_ptest(result_file_, subprocess_name, model_type)
+                                    results_list_of_dataframe_dictionary[result_file_] = results_dataframe
                         else:
                             logging.error("In mResults_get_input_files() :'Result file do not exist in the Server Path .")
                             # returns empty list to gui
@@ -295,3 +319,51 @@ class cPTest_results:
                 return ""
         else:
             return ""
+
+    def mResult_accuracy_process(self, model_type, df):
+        range_acc = 50.07
+        df2 = df[(df.Beam == 0) &
+                (df.Selected_Range == range_acc) &
+                (df.Points > 3)
+                ]
+        df2 = df2.nsmallest(1, 'Adj_Accuracy(cm)')
+        results_dataframe = df2
+        if model_type.lower() == "m8prime":
+            beam_list = [1, 2, 3, 4, 5, 6, 7]
+            for i in beam_list:
+                df3 = df[(df.Beam == i) &
+                        (df.Selected_Range == range_acc) &
+                        (df.Points > 3)
+                        ]
+                df3 = df3.nsmallest(1, 'Adj_Accuracy(cm)')
+                if len(df3) == 0:
+                    df4 = df[(df.Beam == i)]
+                    self.errorPrompt(i, df4)
+                df2 = pd.concat([df2, df3], ignore_index=True)
+            print('The best result is : \n\r {}'.format(df2))
+            results_dataframe = df2.iloc[[0, 1, 2, 3, 4, 5, 6, 7], [3, 2, 7, 8]].values
+            results_dataframe = results_dataframe.astype(float)
+            results_dataframe = pd.DataFrame(results_dataframe,
+                                         columns=['offset', 'true_distance', 'STD', 'Yaw'],
+                                         index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                         dtype=object)
+        if model_type.lower() == "m1edge":
+            df2 = df[(df.Beam == 6) &
+                     (df.Selected_Range == range_acc) &
+                     (df.Points > 3)
+                     ]
+            df2 = df2.nsmallest(1, 'Adj_Accuracy(cm)')
+            results_dataframe = df2.iloc[[0], [3, 2, 7, 8]].values
+            results_dataframe = results_dataframe.astype(float)
+            results_dataframe = pd.DataFrame(results_dataframe,
+                                             columns=['offset', 'True_Distance', 'STD', 'Yaw'],
+                                             index=['Beam7'],
+                                             dtype=object)
+        print('The summary data to key to ptest is : \n\r {}'.format(results_dataframe))
+        return results_dataframe
+
+
+    def errorPrompt(self, beamnumber, df):
+        messagebox.showerror("Beam missing", "Beam {} all data are FAILED \n\r {}". format(beamnumber, df))
+        input()
+        quit(1)
