@@ -9,5 +9,7 @@
   "TNOM" : "cal_offsets.txt",
   "Encoder_Calibration" : "_encoder_cal.csv",
   "Min_Range" : "_min_range.csv",
-  "Noise_Test" : "_noise_test.csv"
+  "Noise_Test" : "_noise_test.csv",
+  "Accuracy_Test" : ".csv",
+  "Range_Test" : ".csv"
 }
