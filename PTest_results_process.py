@@ -52,7 +52,7 @@ class cPTest_results:
                             latest_file = max(get_files_results_qpnum_dir_path, key=os.path.getmtime)
                             get_files_results_qpnum_dir_path = [
                                 file for file in glob.glob(results_qpnum_path + '\\*.csv')
-                                if datetime.fromtimestamp(os.path.getmtime(latest_file)).date() == datetime.fromtimestamp(os.path.getmtime(file)).date()
+                                if (datetime.fromtimestamp(os.path.getmtime(latest_file)) - datetime.fromtimestamp(os.path.getmtime(file))).total_seconds() < 86400
                             ]
                         else:
                             latest_file = max(get_files_results_qpnum_dir_path, key=os.path.getmtime)
@@ -360,6 +360,7 @@ class cPTest_results:
                     df4 = df[(df.Beam == i)]
                     self.errorPrompt(i, df4)
                 df2 = pd.concat([df2, df3], ignore_index=True)
+                df2['Adj_Accuracy(cm)'] = df2['Adj_Accuracy(cm)'].abs()
             print('The best result is : \n\r {}'.format(df2))
             results_dataframe = df2.iloc[[0, 1, 2, 3, 4, 5, 6, 7], [3, 2, 7, 8]].values
             results_dataframe = results_dataframe.astype(float)
@@ -373,6 +374,7 @@ class cPTest_results:
                      (df.Points > 3)
                      ]
             df2 = df2.reindex(df2['Adj_Accuracy(cm)'].abs().sort_values().index)
+            df2['Adj_Accuracy(cm)'] = df2['Adj_Accuracy(cm)'].abs()
             df2 = df2.iloc[[0]]
             results_dataframe = df2.iloc[[0], [3, 2, 7, 8]].values
             results_dataframe = results_dataframe.astype(float)
