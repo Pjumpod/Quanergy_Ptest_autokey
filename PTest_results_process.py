@@ -387,6 +387,7 @@ class cPTest_results:
         df2 = df[(df.Beam == 0) &
                 (df.Points > 3)
                 ]
+        print(df2)
         df2 = df2.nlargest(1, 'Selected_Range', keep='all')
         df2 = df2.nlargest(1, 'Points')
         results_dataframe = df2
@@ -396,6 +397,7 @@ class cPTest_results:
                 df3 = df[(df.Beam == i) &
                          (df.Points > 3)
                          ]
+                print(df3)
                 df3 = df3.nlargest(1, 'Selected_Range', keep='all')
                 df3 = df3.nlargest(1, 'Points')
                 if len(df3) == 0:
@@ -413,6 +415,7 @@ class cPTest_results:
             df2 = df[(df.Beam == 6) &
                      (df.Points > 3)
                      ]
+            print(df2)
             df2 = df2.nlargest(1, 'Selected_Range', keep='all')
             df2 = df2.nlargest(1, 'Points')
             results_dataframe = df2.iloc[[0], [2, 5]].values
