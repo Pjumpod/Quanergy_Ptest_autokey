@@ -3,7 +3,6 @@ import glob
 import re
 import logging
 
-import pandas
 import pandas as pd
 from io import StringIO
 import platform
@@ -343,7 +342,9 @@ class cPTest_results:
                 (df.Selected_Range == range_acc) &
                 (df.Points > 3)
                 ]
-        df2 = df2.nsmallest(1, 'Adj_Accuracy(cm)')
+        print(df2)
+        df2 = df2.reindex(df2['Adj_Accuracy(cm)'].abs().sort_values().index) # df2.nsmallest(1, 'Adj_Accuracy(cm)', key=lambda x: abs(x))
+        df2 = df2.iloc[[0]]
         results_dataframe = df2
         if model_type.lower() == "m8prime":
             beam_list = [1, 2, 3, 4, 5, 6, 7]
@@ -352,7 +353,9 @@ class cPTest_results:
                         (df.Selected_Range == range_acc) &
                         (df.Points > 3)
                         ]
-                df3 = df3.nsmallest(1, 'Adj_Accuracy(cm)')
+                print(df3)
+                df3 = df3.reindex(df3['Adj_Accuracy(cm)'].abs().sort_values().index)
+                df3 = df3.iloc[[0]]
                 if len(df3) == 0:
                     df4 = df[(df.Beam == i)]
                     self.errorPrompt(i, df4)
@@ -369,7 +372,8 @@ class cPTest_results:
                      (df.Selected_Range == range_acc) &
                      (df.Points > 3)
                      ]
-            df2 = df2.nsmallest(1, 'Adj_Accuracy(cm)')
+            df2 = df2.reindex(df2['Adj_Accuracy(cm)'].abs().sort_values().index)
+            df2 = df2.iloc[[0]]
             results_dataframe = df2.iloc[[0], [3, 2, 7, 8]].values
             results_dataframe = results_dataframe.astype(float)
             results_dataframe = pd.DataFrame(results_dataframe,
@@ -419,7 +423,6 @@ class cPTest_results:
                                              dtype=object)
         print('The summary data to key to ptest is : \n\r {}'.format(results_dataframe))
         return results_dataframe
-
 
     def errorPrompt(self, beamnumber, df):
         messagebox.showerror("Beam missing", "Beam {} all data are FAILED \n\r {}". format(beamnumber, df))
