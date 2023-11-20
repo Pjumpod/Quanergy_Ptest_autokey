@@ -247,3 +247,4 @@ if __name__ == "__main__":
     else:
         print("PUSH DATA TO PTEST DONE.")
         messagebox.showinfo("PUSH DATA TO PTEST DONE.", "PUSH DATA TO PTEST DONE.")
+        quit()
