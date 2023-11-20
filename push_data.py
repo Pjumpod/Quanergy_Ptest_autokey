@@ -76,13 +76,15 @@ def askProcess(pmodel):
             "Performance_Test => Receiver_Peak_Test",
             "Performance_Test => Power_Calibration_Over_Temperature",
             "Final_Test => Range_Calibration",
-            "Final_Test => Accuracy_Test"
+            "Final_Test => Accuracy_Test",
+            "Final_Test => Range_Test"
         ]
     elif pmodel == "m1edge":
         OPTIONS = [
             "Performance_Test => Power_Calibration_Over_Temperature",
             "Final_Test => Range_Calibration",
-            "Final_Test => Accuracy_Test"
+            "Final_Test => Accuracy_Test",
+            "Final_Test => Range_Test"
         ]
     master = tk.Tk()
     promtptext = tk.Text(master, height=2, width=52)
@@ -149,8 +151,20 @@ if __name__ == "__main__":
         files_list = list(df_dict_raw_data.keys())
         # PUSH FILE
         push_return = ptestHandler.mPTest_database_post_file(process_name, subprocess_name, files_list, model)
-    elif "Accuracy_Test" in subprocess_name:
-        messagebox.askyesno("Review DATA", "This data will push to ptest \n\r {}".format(df_dict_raw_dataA))
+    elif ("Accuracy_Test" in subprocess_name) or ("Range_Test" in subprocess_name):
+        yesno = messagebox.askyesno("Review DATA", "This data will push to ptest \n\r {}".format(df_dict_raw_data))
+        if yesno:
+            dict_raw_data_values = df_dict_raw_data.values()
+            parser = cPTest_parser_json(process_name, subprocess_name)
+            dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
+                                                                           (list(dict_raw_data_values)[0]))
+            message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
+            print(message)
+            # PUSH data
+            push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
+        else:
+            print("User cancel to push the data to ptest.")
+            quit(0)
     elif "Vertical_Angle" in subprocess_name:
         dict_raw_data_values = df_dict_raw_data.values()
         parser = cPTest_parser_json(process_name, subprocess_name)
