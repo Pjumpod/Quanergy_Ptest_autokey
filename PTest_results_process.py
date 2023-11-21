@@ -21,10 +21,11 @@ class cPTest_results:
         # print("AP0")
         get_files_results_static_process_file_str = self.mResults_list_static_xml_process(subprocess_name)
         # print(get_files_results_static_process_file_str)
-        if "accuracy_test" in subprocess_name.lower():
+        results_qpnum_path_2 = os.path.join(results_dir_path, 'range_test_data/')
+        if ("accuracy_test" in subprocess_name.lower()) or ("range_test" in subprocess_name.lower()):
             results_dir_path = os.path.join(results_dir_path, 'accuracy_test_data/')
-        elif "range_test" in subprocess_name.lower():
-            results_dir_path = os.path.join(results_dir_path, 'range_test_data/')
+        # elif "range_test" in subprocess_name.lower():
+        #    results_dir_path = os.path.join(results_dir_path, 'range_test_data/')
         results_qpnum_path = results_dir_path # os.path.join(results_dir_path, qpnum + '/')
         print("In mResults_get_input_files() :'Results Server Path {}".format(results_qpnum_path))
         print("In mResults_get_input_files() :'Results static dictionary {}".format(get_files_results_static_process_file_str))
@@ -49,9 +50,11 @@ class cPTest_results:
                         # 4. Get all files from Results Server(results_qpnum_path) that matches subprocess result filename
                         get_files_results_qpnum_dir_path = glob.glob("".join([results_qpnum_path, "\\*{}".format(result_file)]))
                         if ("accuracy_test" in subprocess_name.lower()) or ("range_test" in subprocess_name.lower()):
+                            get_files_results_qpnum_dir_path += glob.glob(
+                                "".join([results_qpnum_path_2, "\\*{}".format(result_file)]))
                             latest_file = max(get_files_results_qpnum_dir_path, key=os.path.getmtime)
                             get_files_results_qpnum_dir_path = [
-                                file for file in glob.glob(results_qpnum_path + '\\*.csv')
+                                file for file in get_files_results_qpnum_dir_path # glob.glob(results_qpnum_path + '\\*.csv')
                                 if (datetime.fromtimestamp(os.path.getmtime(latest_file)) - datetime.fromtimestamp(os.path.getmtime(file))).total_seconds() < 86400
                             ]
                         else:
@@ -338,7 +341,8 @@ class cPTest_results:
 
     def mResult_accuracy_process(self, model_type, df):
         range_acc = 50.07
-        df2 = df[(df.Beam == 0) &
+        start_beam = 6 if model_type == "m1edge" else 0
+        df2 = df[(df.Beam == start_beam) &
                 (df.Selected_Range == range_acc) &
                 (df.Points > 3)
                 ]
@@ -369,13 +373,13 @@ class cPTest_results:
                                          index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
                                          dtype=object)
         if model_type.lower() == "m1edge":
-            df2 = df[(df.Beam == 6) &
-                     (df.Selected_Range == range_acc) &
-                     (df.Points > 3)
-                     ]
-            df2 = df2.reindex(df2['Adj_Accuracy(cm)'].abs().sort_values().index)
+            # df2 = df[(df.Beam == 6) &
+            #         (df.Selected_Range == range_acc) &
+            #         (df.Points > 3)
+            #         ]
+            # df2 = df2.reindex(df2['Adj_Accuracy(cm)'].abs().sort_values().index)
             df2['Adj_Accuracy(cm)'] = df2['Adj_Accuracy(cm)'].abs()
-            df2 = df2.iloc[[0]]
+            # df2 = df2.iloc[[0]]
             results_dataframe = df2.iloc[[0], [3, 2, 7, 8]].values
             results_dataframe = results_dataframe.astype(float)
             results_dataframe = pd.DataFrame(results_dataframe,
@@ -386,7 +390,10 @@ class cPTest_results:
         return results_dataframe
 
     def mResult_range_process(self, model_type, df):
-        df2 = df[(df.Beam == 0) &
+        range_acc = 50.07
+        df = df[df['Selected_Range'] != range_acc]
+        start_beam = 6 if model_type == "m1edge" else 0
+        df2 = df[(df.Beam == start_beam) &
                 (df.Points > 3)
                 ]
         print(df2)
@@ -414,12 +421,12 @@ class cPTest_results:
                                          index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
                                          dtype=object)
         if model_type.lower() == "m1edge":
-            df2 = df[(df.Beam == 6) &
-                     (df.Points > 3)
-                     ]
+            # df2 = df[(df.Beam == 6) &
+            #         (df.Points > 3)
+            #         ]
             print(df2)
-            df2 = df2.nlargest(1, 'Selected_Range', keep='all')
-            df2 = df2.nlargest(1, 'Points')
+            # df2 = df2.nlargest(1, 'Selected_Range', keep='all')
+            # df2 = df2.nlargest(1, 'Points')
             results_dataframe = df2.iloc[[0], [2, 5]].values
             results_dataframe = results_dataframe.astype(float)
             results_dataframe = pd.DataFrame(results_dataframe,
