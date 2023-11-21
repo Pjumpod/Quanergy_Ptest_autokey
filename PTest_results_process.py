@@ -438,5 +438,5 @@ class cPTest_results:
 
     def errorPrompt(self, beamnumber, df):
         messagebox.showerror("Beam missing", "Beam {} all data are FAILED \n\r {}". format(beamnumber, df))
-        input()
+        input("HIT ENTER TO CLOSE")
         quit(1)
