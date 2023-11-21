@@ -13,6 +13,9 @@ from datetime import datetime
 
 class cPTest_results:
 
+    def __init__(self):
+        self.range_acc = 50.07
+
     def mResults_get_input_files(self, subprocess_name, results_dir_path, model_type):
 
         logging.info("==============================================================")
@@ -340,10 +343,9 @@ class cPTest_results:
             return ""
 
     def mResult_accuracy_process(self, model_type, df):
-        range_acc = 50.07
         start_beam = 6 if model_type == "m1edge" else 0
         df2 = df[(df.Beam == start_beam) &
-                (df.Selected_Range == range_acc) &
+                (df.Selected_Range == self.range_acc) &
                 (df.Points > 3)
                 ]
         print(df2)
@@ -354,7 +356,7 @@ class cPTest_results:
             beam_list = [1, 2, 3, 4, 5, 6, 7]
             for i in beam_list:
                 df3 = df[(df.Beam == i) &
-                        (df.Selected_Range == range_acc) &
+                        (df.Selected_Range == self.range_acc) &
                         (df.Points > 3)
                         ]
                 print(df3)
@@ -374,7 +376,7 @@ class cPTest_results:
                                          dtype=object)
         if model_type.lower() == "m1edge":
             # df2 = df[(df.Beam == 6) &
-            #         (df.Selected_Range == range_acc) &
+            #         (df.Selected_Range == self.range_acc) &
             #         (df.Points > 3)
             #         ]
             # df2 = df2.reindex(df2['Adj_Accuracy(cm)'].abs().sort_values().index)
@@ -390,8 +392,7 @@ class cPTest_results:
         return results_dataframe
 
     def mResult_range_process(self, model_type, df):
-        range_acc = 50.07
-        df = df[df['Selected_Range'] != range_acc]
+        df = df[df['Selected_Range'] != self.range_acc]
         start_beam = 6 if model_type == "m1edge" else 0
         df2 = df[(df.Beam == start_beam) &
                 (df.Points > 3)
