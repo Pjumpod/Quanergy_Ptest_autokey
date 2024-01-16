@@ -382,7 +382,6 @@ class cPTest_database:
                         }
                     }
                 }
-
             # 2. Create Json data dict
             json_dict = {'data': json.dumps(json_data)}
 

@@ -89,7 +89,8 @@ def askProcess(pmodel):
         ]
     elif pmodel == "mq":
         OPTIONS = [
-            "Alignment => Vertical_Angle"
+            "Alignment => Vertical_Angle",
+            "Performance_Test => Power_Calibration_Over_Temperature"
         ]
     master = tk.Tk()
     promtptext = tk.Text(master, height=2, width=52)
