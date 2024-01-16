@@ -373,7 +373,7 @@ class cPTest_database:
                     "user": self.username, "pwd": self.password,
                     "process_data": {
                         process_name: {
-                            "Generate_Ini": {"Beam7": "file4", "spec_bool": 1},
+                            "Generate_Ini": {"value": "file4", "spec_bool": 1},
                             subprocess_name:
                                 {"Plots": {"Raw0": {"value": "file1", "spec_bool": 1},
                                            "Raw1": {"value": "file2", "spec_bool": 1},
