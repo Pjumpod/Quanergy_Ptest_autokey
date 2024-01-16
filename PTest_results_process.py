@@ -183,6 +183,12 @@ class cPTest_results:
                     lines[0] = lines[0].strip()
                 strIO = StringIO("0," + lines[0])
                 dict_input_raw_data = pd.read_csv(strIO, header=None)
+
+            if model_type == "mq":
+                f = open(results_file_fullpath, 'r')
+                lines = f.readlines()[1:]
+                f.close()
+
         elif ".csv" in results_file_fullpath.lower():
             dict_input_raw_data = pd.read_csv(results_file_fullpath, header=None)
         elif ".png" in results_file_fullpath.lower():
@@ -203,6 +209,14 @@ class cPTest_results:
                                                    columns=['True_Angle', 'Error'],
                                                    index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
                                                    dtype=object)
+            if model_type == "mq":
+                results_dataframe = dict_input_raw_data.iloc[1:9, [2, 3]].values
+                print(results_dataframe)
+                results_dataframe = results_dataframe.astype(float)
+                results_dataframe = pd.DataFrame(results_dataframe,
+                                                   columns=['True_Angle', 'Error'],
+                                                   index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                                   dtype=object).abs()
 
         elif bool(re.search("range_calibration", subprocess_name, re.IGNORECASE)):
             if model_type == "m8prime":

@@ -368,6 +368,20 @@ class cPTest_database:
                         }
                     }
                 }
+            elif model == "mq":
+                json_data = {
+                    "user": self.username, "pwd": self.password,
+                    "process_data": {
+                        process_name: {
+                            "Generate_Ini": {"Beam7": "file4", "spec_bool": 1},
+                            subprocess_name:
+                                {"Plots": {"Raw0": {"value": "file1", "spec_bool": 1},
+                                           "Raw1": {"value": "file2", "spec_bool": 1},
+                                           "Raw2": {"value": "file3", "spec_bool": 1}}
+                                 }
+                        }
+                    }
+                }
 
             # 2. Create Json data dict
             json_dict = {'data': json.dumps(json_data)}

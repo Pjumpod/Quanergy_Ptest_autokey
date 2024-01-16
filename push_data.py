@@ -44,7 +44,8 @@ def askAccount():
 def askModel():
     OPTIONS = [
         "m8prime",
-        "m1edge"
+        "m1edge",
+        "mq"
     ]
     master = tk.Tk()
     promtptext = tk.Text(master, height=2, width=52)
@@ -85,6 +86,10 @@ def askProcess(pmodel):
             "Final_Test => Range_Calibration",
             "Final_Test => Accuracy_Test",
             "Final_Test => Range_Test"
+        ]
+    elif pmodel == "mq":
+        OPTIONS = [
+            "Alignment => Vertical_Angle"
         ]
     master = tk.Tk()
     promtptext = tk.Text(master, height=2, width=52)
