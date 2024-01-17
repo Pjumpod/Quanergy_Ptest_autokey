@@ -188,6 +188,20 @@ class cPTest_results:
                 f = open(results_file_fullpath, 'r')
                 lines = f.readlines()[1:]
                 f.close()
+                if (len(lines) > 1) and (len(lines[0]) > 1):
+                    messagebox.showerror("ERROR", "Noise Test ไม่ถูก key ข้อมูล => ติดต่อ จุมภฏ \n\r\n\r"
+                                                  "Noise Test is not key yet, Contract Jumpod \n\r\n\r"
+                                                  "Tel : 083-768-7507")
+                    return results_file_fullpath
+                strIO = StringIO("""0,0
+                1,0
+                2,0
+                3,0
+                4,0
+                5,0
+                6,0
+                7,0""")
+                dict_input_raw_data = pd.read_csv(strIO, header=None)
 
         elif ".csv" in results_file_fullpath.lower():
             dict_input_raw_data = pd.read_csv(results_file_fullpath, header=None)
@@ -229,6 +243,13 @@ class cPTest_results:
             if model_type == "m1edge":
                 results_dataframe = dict_input_raw_data.iloc[6, 1]
                 results_dataframe = results_dataframe.astype(float)
+            if model_type == "mq":
+                results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
+                results_dataframe = results_dataframe.astype(float)
+                results_dataframe = pd.DataFrame(results_dataframe,
+                                                   columns=['offset'],
+                                                   index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                                   dtype=object)
 
         elif bool(re.search("encoder_calibration", subprocess_name, re.IGNORECASE)):
             results_dataframe = dict_input_raw_data.iloc[[1]].values
@@ -243,6 +264,11 @@ class cPTest_results:
                                                 columns=['Amplitude', 'Phase'],
                                                 index=['Results'],
                                                 dtype=object)
+            if model_type == "mq":
+                results_dataframe = pd.DataFrame(results_dataframe,
+                                                columns=['amplitude', 'phase'],
+                                                index=['Results'],
+                                                dtype=object)
         elif bool(re.search("min_range", subprocess_name, re.IGNORECASE)):
             if model_type == "m8prime":
                 results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
@@ -254,6 +280,13 @@ class cPTest_results:
             if model_type == "m1edge":
                 results_dataframe = dict_input_raw_data.iloc[0, 1]
                 results_dataframe = results_dataframe.astype(float)
+            if model_type == "mq":
+                results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
+                results_dataframe = results_dataframe.astype(float)
+                results_dataframe = pd.DataFrame(results_dataframe,
+                                                   columns=['min_distance'],
+                                                   index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                                   dtype=object)
 
         elif bool(re.search("noise_test", subprocess_name, re.IGNORECASE)):
             if model_type == "m8prime":
@@ -266,10 +299,24 @@ class cPTest_results:
             if model_type == "m1edge":
                 results_dataframe = dict_input_raw_data.iloc[0, 1]
                 results_dataframe = results_dataframe.astype(float)
-
+            if model_type == "mq":
+                results_dataframe = dict_input_raw_data.iloc[[0, 1, 2, 3, 4, 5, 6, 7], 1].values
+                results_dataframe = results_dataframe.astype(float)
+                results_dataframe = pd.DataFrame(results_dataframe,
+                                                   columns=['points'],
+                                                   index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                                   dtype=object)
+        elif bool(re.search("encoder_offset", subprocess_name, re.IGNORECASE)):
+            if model_type == "mq":
+                results_dataframe = dict_input_raw_data.iloc[8, 1]
+                results_dataframe = results_dataframe.astype(float)
         elif bool(re.search("tnom", subprocess_name, re.IGNORECASE)):
-            results_dataframe = dict_input_raw_data.iloc[8, 1]
-            results_dataframe = results_dataframe.astype(float)
+            if model_type == "mq":
+                results_dataframe = dict_input_raw_data.iloc[9, 1]
+                results_dataframe = results_dataframe.astype(float)
+            if model_type == "m1edge" or model_type == "m8prime":
+                results_dataframe = dict_input_raw_data.iloc[8, 1]
+                results_dataframe = results_dataframe.astype(float)
         else:
             logging.error("In mResults_map_results_to_ptest,  Result_file raw dataframe :{} is failed to Parse".format(results_dataframe))
             # raise SystemExit()
