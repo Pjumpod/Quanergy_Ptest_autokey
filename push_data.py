@@ -91,7 +91,8 @@ def askProcess(pmodel):
         OPTIONS = [
             "Alignment => Vertical_Angle",
             "Performance_Test => Power_Calibration_Over_Temperature",
-            "Final_Test => Range_Calibration"
+            "Final_Test => Range_Calibration",
+            "Final_Test => Accuracy_Test"
         ]
     master = tk.Tk()
     promtptext = tk.Text(master, height=2, width=52)

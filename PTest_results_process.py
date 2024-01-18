@@ -225,7 +225,6 @@ class cPTest_results:
                                                    dtype=object)
             if model_type == "mq":
                 results_dataframe = dict_input_raw_data.iloc[1:9, [2, 3]].values
-                print(results_dataframe)
                 results_dataframe = results_dataframe.astype(float)
                 results_dataframe = pd.DataFrame(results_dataframe,
                                                    columns=['True_Angle', 'Error'],
@@ -449,6 +448,28 @@ class cPTest_results:
                                              columns=['offset', 'True_Distance', 'STD', 'Yaw'],
                                              index=['Beam7'],
                                              dtype=object)
+        if model_type.lower() == "mq":
+            beam_list = [1, 2, 3, 4, 5, 6, 7]
+            for i in beam_list:
+                df3 = df[(df.Beam == i) &
+                        (df.Selected_Range == self.range_acc) &
+                        (df.Points > 3)
+                        ]
+                print(df3)
+                df3 = df3.reindex(df3['Adj_Accuracy(cm)'].abs().sort_values().index)
+                df3 = df3.iloc[[0]]
+                if len(df3) == 0:
+                    df4 = df[(df.Beam == i)]
+                    self.errorPrompt(i, df4)
+                df2 = pd.concat([df2, df3], ignore_index=True)
+                df2['Adj_Accuracy(cm)'] = df2['Adj_Accuracy(cm)'].abs()
+            print('The best result is : \n\r {}'.format(df2))
+            results_dataframe = df2.iloc[[0, 1, 2, 3, 4, 5, 6, 7], [3, 2, 7, 8]].values
+            results_dataframe = results_dataframe.astype(float)
+            results_dataframe = pd.DataFrame(results_dataframe,
+                                         columns=['offset', 'true_distance', 'STD', 'Yaw'],
+                                         index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                         dtype=object)
         print('The summary data to key to ptest is : \n\r {}'.format(results_dataframe))
         return results_dataframe
 
