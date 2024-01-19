@@ -474,7 +474,7 @@ class cPTest_results:
         return results_dataframe
 
     def mResult_range_process(self, model_type, df):
-        df = df[df['Selected_Range'] != self.range_acc]
+        df = df[df['Selected_Range'] != self.range_acc] # range_acc = 50.07
         start_beam = 6 if model_type == "m1edge" else 0
         df2 = df[(df.Beam == start_beam) &
                 (df.Points > 3)
@@ -516,6 +516,26 @@ class cPTest_results:
                                              columns=['Range', 'Points'],
                                              index=['Results'],
                                              dtype=object)
+        if model_type.lower() == "mq":
+            beam_list = [1, 2, 3, 4, 5, 6, 7]
+            for i in beam_list:
+                df3 = df[(df.Beam == i) &
+                         (df.Points > 3)
+                         ]
+                print(df3)
+                df3 = df3.nlargest(1, 'Selected_Range', keep='all')
+                df3 = df3.nlargest(1, 'Points')
+                if len(df3) == 0:
+                    df4 = df[(df.Beam == i)]
+                    self.errorPrompt(i, df4)
+                df2 = pd.concat([df2, df3], ignore_index=True)
+            print('The best result is : \n\r {}'.format(df2))
+            results_dataframe = df2.iloc[[0, 1, 2, 3, 4, 5, 6, 7], [2, 5]].values
+            results_dataframe = results_dataframe.astype(float)
+            results_dataframe = pd.DataFrame(results_dataframe,
+                                         columns=['range', 'points'],
+                                         index=['beam1', 'beam2', 'beam3', 'beam4', 'beam5', 'beam6', 'beam7', 'beam8'],
+                                         dtype=object)
         print('The summary data to key to ptest is : \n\r {}'.format(results_dataframe))
         return results_dataframe
 
