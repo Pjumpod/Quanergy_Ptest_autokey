@@ -12,5 +12,7 @@
   "Min_Range" : "_min_range.csv",
   "Noise_Test" : "_noise_test.csv",
   "Accuracy_Test" : ".csv",
-  "Range_Test" : ".csv"
+  "Range_Test" : ".csv",
+  "APD_Alignment_path" : "C:\\Users\\quser\\Desktop\\Align image",
+   "APD_Alignment" : "B1.jpg,B8.jpg"
 }

@@ -7,6 +7,7 @@ import pandas as pd
 from io import StringIO
 import platform
 import json
+import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
 
@@ -139,6 +140,8 @@ class cPTest_results:
         # Convert each csv file to dataframe
         dict_input_raw_data = ""
         if subprocess_name == "Power_Calibration_Over_Temperature":
+            return results_file_fullpath
+        if subprocess_name == "APD_Alignment":
             return results_file_fullpath
         if "min_range" in subprocess_name.lower():
             f = open(results_file_fullpath, 'r')
@@ -384,15 +387,22 @@ class cPTest_results:
             print(" Data incomplete. Data failed to push ")
 
 
-    def mResults_dir_path(self, qpnum: str):
+    def mResults_dir_path(self, qpnum: str, subprocess_name):
         with open("setting.json", "r") as read_file:
             setting = json.load(read_file)
         if setting is not None:
             if platform.system().upper() == "WINDOWS":
-                ptest_results_dir_path = setting['windows_path']
+                if "apd_alignment" in subprocess_name.lower():
+                    self.mResult_apd_alignment(setting, qpnum)
+                    ptest_results_dir_path = setting['APD_Alignment_path']
+                    new_qpnum = process_type
+                else:
+                    ptest_results_dir_path = setting['windows_path']
+                    new_qpnum = qpnum
             else:
                 ptest_results_dir_path = setting['linux_path']
-            full_results_path = os.path.join(ptest_results_dir_path, qpnum + "/")
+                new_qpnum = qpnum
+            full_results_path = os.path.join(ptest_results_dir_path, new_qpnum + "/")
             ptest_results_dir_path = full_results_path
             if os.path.exists(ptest_results_dir_path):
                 return ptest_results_dir_path
@@ -401,6 +411,34 @@ class cPTest_results:
                 return ""
         else:
             return ""
+
+    def mResult_apd_alignment(self, setting, qpnum: str):
+        ptest_results_dir_path = setting['APD_Alignment_path']
+        qpnum_folders = [folder for folder in os.listdir(ptest_results_dir_path) if qpnum in folder]
+        if not qpnum_folders:
+            messagebox.showinfo("No" + "\t" + qpnum + "\t" + "in this folder.")
+            return
+
+        master = tk.Tk()
+        promtptext = tk.Text(master, height=2, width=52)
+        promtptext.insert(tk.INSERT, "Which " + qpnum + " is you need to AUTOKEY")
+        promtptext.pack()
+        variable = tk.StringVar(master)
+        variable.set(qpnum_folders[0])  # default value
+        w = tk.OptionMenu(master, variable, *qpnum_folders)
+        w.config(width=20, height=3)
+        w.pack()
+
+        def process_ok():
+            global process_type
+            process_type = variable.get()
+            master.withdraw()
+            master.destroy()
+
+        button = tk.Button(master, text="OK", command=process_ok, height=2, width=10)
+        button.pack()
+        master.wait_window()
+        return True
 
     def mResult_accuracy_process(self, model_type, df):
         start_beam = 6 if model_type == "m1edge" else 0

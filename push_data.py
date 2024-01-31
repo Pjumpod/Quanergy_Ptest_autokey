@@ -90,6 +90,7 @@ def askProcess(pmodel):
     elif pmodel == "mq":
         OPTIONS = [
             "Alignment => Vertical_Angle",
+            "Alignment => APD_Alignment",
             "Performance_Test => Power_Calibration_Over_Temperature",
             "Final_Test => Range_Calibration",
             "Final_Test => Accuracy_Test",
@@ -142,7 +143,7 @@ if __name__ == "__main__":
     ptest_server_path = 'http://ptest.quanergy.com/'
 
     Test_results = cPTest_results()
-    results_dir_path = Test_results.mResults_dir_path(serial_num)
+    results_dir_path = Test_results.mResults_dir_path(serial_num, subprocess_name)
 
     ptestHandler = cPTest_database(serial_num, username, password, ptest_server_path, model)
     parser = cPTest_parser_json(process_name, subprocess_name)
@@ -174,6 +175,13 @@ if __name__ == "__main__":
         else:
             print("User cancel to push the data to ptest.")
             quit(0)
+    elif "APD_Alignment" in subprocess_name:
+        # Pop up Dialog for Plot dataframes
+        print("In mDialog_post_to_ptest().In Performance Test")
+        print("==> File ", df_dict_raw_data.keys())
+        files_list = list(df_dict_raw_data.keys())
+        # PUSH FILE
+        push_return = ptestHandler.mPTest_database_post_file(process_name, subprocess_name, files_list, model)
     elif "Vertical_Angle" in subprocess_name:
         dict_raw_data_values = df_dict_raw_data.values()
         parser = cPTest_parser_json(process_name, subprocess_name)

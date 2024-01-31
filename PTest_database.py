@@ -409,6 +409,33 @@ class cPTest_database:
             files = {
                 'file1': (inputdataFiles[0], fileobj1)
             }
+        elif "APD_Alignment" in subprocess_name:
+            # 1. Format Json data
+            if model == "mq":
+                json_data = {
+                    "user": self.username, "pwd": self.password,
+                    "process_data": {
+                        process_name: {
+                            subprocess_name: {"beam1": "file1",
+                                              "beam8": "file2"}
+                        }
+                    }
+                }
+            # 2. Create Json data dict
+            json_dict = {'data': json.dumps(json_data)}
+
+            # 3. Create File Handlers
+            with open(inputdataFiles[0], 'rb') as image:
+                fileobj1 = image.read()
+            with open(inputdataFiles[1], 'rb') as image:
+                fileobj2 = image.read()
+
+            # 4. Dict of files
+            files = {'file1': ""}
+            files = {
+                'file1': (inputdataFiles[0], fileobj1),
+                'file2': (inputdataFiles[1], fileobj2)
+            }
 
         # 5.Push Json Data to PTest
         if self.mPTest_database_check_connection() == 200:
