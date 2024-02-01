@@ -14,5 +14,7 @@
   "Accuracy_Test" : ".csv",
   "Range_Test" : ".csv",
   "APD_Alignment_path" : "C:\\Users\\quser\\Desktop\\Align image",
-   "APD_Alignment" : "B1.jpg,B8.jpg"
+  "APD_Alignment" : "B1.jpg,B8.jpg",
+  "Laser_Alignment_path" : "C:\\Users\\quser\\Desktop\\Align image",
+  "Laser_Alignment" : "B1.jpg,B8.jpg"
 }

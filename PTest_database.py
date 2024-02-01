@@ -409,19 +409,9 @@ class cPTest_database:
             files = {
                 'file1': (inputdataFiles[0], fileobj1)
             }
-        elif "APD_Alignment" in subprocess_name:
-
+        elif "APD_Alignment" in subprocess_name or "Laser_Alignment" in subprocess_name:
             # 1. Format Json data
-            if model == "m1edge":
-                json_data = {
-                    "user": self.username, "pwd": self.password,
-                    "process_data": {
-                        process_name: {
-                            subprocess_name: {"beam7": "file1"}
-                        }
-                    }
-                }
-            elif model == "mq":
+            if model == "mq":
                 json_data = {
                     "user": self.username, "pwd": self.password,
                     "process_data": {
@@ -447,28 +437,6 @@ class cPTest_database:
                 'file1': (inputdataFiles[0], fileobj1),
                 'file2': (inputdataFiles[1], fileobj2)
             }
-        elif "Laser_Alignment" in subprocess_name:
-            
-            # 1. Format Json data
-            if model == "m1edge":
-                json_data = {
-                    "user": self.username, "pwd": self.password,
-                    "process_data": {
-                        process_name: {
-                            subprocess_name: {"beam7": "file1"}
-                        }
-                    }
-                }
-            elif model == "mq":
-                json_data = {
-                    "user": self.username, "pwd": self.password,
-                    "process_data": {
-                        process_name: {
-                            subprocess_name: {"beam1": "file1",
-                                              "beam8": "file2"}
-                        }
-                    }
-                }
 
             # 2. Create Json data dict
             json_dict = {'data': json.dumps(json_data)}

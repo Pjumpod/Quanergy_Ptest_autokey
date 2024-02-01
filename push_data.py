@@ -91,6 +91,7 @@ def askProcess(pmodel):
         OPTIONS = [
             "Alignment => Vertical_Angle",
             "Alignment => APD_Alignment",
+            "Alignment => Laser_Alignment",
             "Performance_Test => Power_Calibration_Over_Temperature",
             "Final_Test => Range_Calibration",
             "Final_Test => Accuracy_Test",
@@ -175,22 +176,14 @@ if __name__ == "__main__":
         else:
             print("User cancel to push the data to ptest.")
             quit(0)
-    elif "APD_Alignment" in subprocess_name:
-        if model == "m1edge" or model == "mq":
+    elif "APD_Alignment" in subprocess_name or "Laser_Alignment" in subprocess_name:
+        if model == "mq":
             # Pop up Dialog for Plot dataframes
             print("In mDialog_post_to_ptest().In Performance Test")
             print("==> File ", df_dict_raw_data.keys())
             files_list = list(df_dict_raw_data.keys())
             # PUSH FILE
             push_return = ptestHandler.mPTest_database_post_file(process_name, subprocess_name, files_list, model)
-    elif "Laser_Alignment" in subprocess_name:
-        if model == "m1edge" or model == "mq":
-            # Pop up Dialog for Plot dataframes
-            print("In mDialog_post_to_ptest().In Performance Test")
-            print("==> File ", df_dict_raw_data.keys())
-            files_list = list(df_dict_raw_data.keys())
-            # PUSH FILE
-            push_return = ptestHandler.mPTest_database_post_file(process_name, subprocess_name, files_list, model)    
     elif "Vertical_Angle" in subprocess_name:
         dict_raw_data_values = df_dict_raw_data.values()
         parser = cPTest_parser_json(process_name, subprocess_name)
