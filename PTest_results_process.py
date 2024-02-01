@@ -393,8 +393,12 @@ class cPTest_results:
         if setting is not None:
             if platform.system().upper() == "WINDOWS":
                 if "apd_alignment" in subprocess_name.lower():
-                    self.mResult_apd_alignment(setting, qpnum)
                     ptest_results_dir_path = setting['APD_Alignment_path']
+                    self.mResult_laser_apd_alignment_process(setting, qpnum, ptest_results_dir_path)
+                    new_qpnum = process_type
+                elif "laser_alignment" in subprocess_name.lower():
+                    ptest_results_dir_path = setting['Laser_Alignment_path']
+                    self.mResult_laser_apd_alignment_process(setting, qpnum, ptest_results_dir_path)
                     new_qpnum = process_type
                 else:
                     ptest_results_dir_path = setting['windows_path']
@@ -412,8 +416,7 @@ class cPTest_results:
         else:
             return ""
 
-    def mResult_apd_alignment(self, setting, qpnum: str):
-        ptest_results_dir_path = setting['APD_Alignment_path']
+    def mResult_laser_apd_alignment_process(self, setting, qpnum: str, ptest_results_dir_path):
         qpnum_folders = [folder for folder in os.listdir(ptest_results_dir_path) if qpnum in folder]
         if not qpnum_folders:
             messagebox.showinfo("No" + "\t" + qpnum + "\t" + "in this folder.")
