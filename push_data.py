@@ -16,6 +16,8 @@ def askQP(subname):
     sn = "xx"
     while (len(sn) != 6) or (sn[:2].upper() != "QP"):
         sn = simpledialog.askstring("Question", "Enter your qpnum: ")
+        if sn[:2].upper() != "QP":
+            sn = "QP" + sn
         if sn is None:
             messagebox.showerror("quit", "User cancel")
             quit(0)
@@ -147,7 +149,7 @@ if __name__ == "__main__":
     results_dir_path = Test_results.mResults_dir_path(serial_num, subprocess_name)
 
     ptestHandler = cPTest_database(serial_num, username, password, ptest_server_path, model)
-    parser = cPTest_parser_json(process_name, subprocess_name)
+    parser = cPTest_parser_json(process_name, subprocess_name, model)
     dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
 
     df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
@@ -166,7 +168,7 @@ if __name__ == "__main__":
         yesno = messagebox.askyesno("Review DATA", "This data will push to ptest \n\r {}".format(df_dict_raw_data))
         if yesno:
             dict_raw_data_values = df_dict_raw_data.values()
-            parser = cPTest_parser_json(process_name, subprocess_name)
+            parser = cPTest_parser_json(process_name, subprocess_name, model)
             dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                            (list(dict_raw_data_values)[0]))
             message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -186,7 +188,7 @@ if __name__ == "__main__":
             push_return = ptestHandler.mPTest_database_post_file(process_name, subprocess_name, files_list, model)
     elif "Vertical_Angle" in subprocess_name:
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name)
+        parser = cPTest_parser_json(process_name, subprocess_name, model)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -195,7 +197,7 @@ if __name__ == "__main__":
         push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
     elif "Range_Calibration" in subprocess_name:
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name)
+        parser = cPTest_parser_json(process_name, subprocess_name, model)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -210,7 +212,7 @@ if __name__ == "__main__":
             dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
             df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
             dict_raw_data_values = df_dict_raw_data.values()
-            parser = cPTest_parser_json(process_name, subprocess_name)
+            parser = cPTest_parser_json(process_name, subprocess_name, model)
             dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
             message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -225,7 +227,7 @@ if __name__ == "__main__":
         dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
         df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name)
+        parser = cPTest_parser_json(process_name, subprocess_name, model)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -239,7 +241,7 @@ if __name__ == "__main__":
         dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
         df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name)
+        parser = cPTest_parser_json(process_name, subprocess_name, model)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -253,7 +255,7 @@ if __name__ == "__main__":
         dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
         df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name)
+        parser = cPTest_parser_json(process_name, subprocess_name, model)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -267,7 +269,7 @@ if __name__ == "__main__":
         dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
         df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name)
+        parser = cPTest_parser_json(process_name, subprocess_name, model)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
