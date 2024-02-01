@@ -16,6 +16,8 @@ def askQP(subname):
     sn = "xx"
     while (len(sn) != 6) or (sn[:2].upper() != "QP"):
         sn = simpledialog.askstring("Question", "Enter your qpnum: ")
+        if sn[:2].upper() != "QP":
+            sn = "QP" + sn
         if sn is None:
             messagebox.showerror("quit", "User cancel")
             quit(0)
