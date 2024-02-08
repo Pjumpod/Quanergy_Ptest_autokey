@@ -11,6 +11,93 @@ from tkinter import simpledialog, messagebox
 # import platform
 # import time
 
+def ask_APD_Shims():
+    def on_closing():
+        quit(0)
+    root = tk.Tk()
+    labels = ["APD Shims", "shims_A", "shims_B", "shims_C", "shims_D"]
+    entry_widgets = []
+    for i, label_text in enumerate(labels):
+        tk.Label(root, text=label_text).grid(row=i, column=0, padx=5, pady=5, sticky="w")
+
+    for i in range(1, 5):
+        entry = tk.Entry(root)
+        entry.grid(row=i, column=1, padx=5, pady=5)
+        entry_widgets.append(entry)
+
+    save_button = tk.Button(root, text="SAVE", command=root.quit)
+    save_button.grid(row=5, column=0, columnspan=2, padx=5, pady=10)
+
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    root.mainloop()
+
+    return [entry.get() for entry in entry_widgets]
+
+def ask_APD_Peak():
+    def on_closing():
+        quit(0)
+    root = tk.Tk()
+    labels = ["APD Peak", "beam1", "beam8"]
+    entry_widgets = []
+    for i, label_text in enumerate(labels):
+        tk.Label(root, text=label_text).grid(row=i, column=0, padx=5, pady=5, sticky="w")
+
+    for i in range(1, 3):
+        entry = tk.Entry(root)
+        entry.grid(row=i, column=1, padx=5, pady=5)
+        entry_widgets.append(entry)
+
+    save_button = tk.Button(root, text="SAVE", command=root.quit)
+    save_button.grid(row=3, column=0, columnspan=2, padx=5, pady=10)
+
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    root.mainloop()
+
+    return [entry.get() for entry in entry_widgets]
+
+def ask_APD_Board_Current_Draw():
+    def on_closing():
+        quit(0)
+    root = tk.Tk()
+    labels = ["APD Board Current Draw", "(mA)"]
+    entry_widgets = []
+    for i, label_text in enumerate(labels):
+        tk.Label(root, text=label_text).grid(row=i, column=0, padx=5, pady=5, sticky="w")
+
+    for i in range(1, 2):
+        entry = tk.Entry(root)
+        entry.grid(row=i, column=1, padx=5, pady=5)
+        entry_widgets.append(entry)
+
+    save_button = tk.Button(root, text="SAVE", command=root.quit)
+    save_button.grid(row=2, column=0, columnspan=2, padx=5, pady=10)
+
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    root.mainloop()
+
+    return [entry.get() for entry in entry_widgets]
+
+def ask_APD_Breakdown_Supplier():
+    def on_closing():
+        quit(0)
+    root = tk.Tk()
+    labels = ["APD Breakdown Supplier", "(V)"]
+    entry_widgets = []
+    for i, label_text in enumerate(labels):
+        tk.Label(root, text=label_text).grid(row=i, column=0, padx=5, pady=5, sticky="w")
+
+    for i in range(1, 2):
+        entry = tk.Entry(root)
+        entry.grid(row=i, column=1, padx=5, pady=5)
+        entry_widgets.append(entry)
+
+    save_button = tk.Button(root, text="SAVE", command=root.quit)
+    save_button.grid(row=2, column=0, columnspan=2, padx=5, pady=10)
+
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    root.mainloop()
+
+    return [entry.get() for entry in entry_widgets]
 
 def askQP(subname):
     sn = "xx"
@@ -149,7 +236,7 @@ if __name__ == "__main__":
     results_dir_path = Test_results.mResults_dir_path(serial_num, subprocess_name)
 
     ptestHandler = cPTest_database(serial_num, username, password, ptest_server_path, model)
-    parser = cPTest_parser_json(process_name, subprocess_name, model)
+    parser = cPTest_parser_json(process_name, subprocess_name)
     dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
 
     df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
@@ -168,7 +255,7 @@ if __name__ == "__main__":
         yesno = messagebox.askyesno("Review DATA", "This data will push to ptest \n\r {}".format(df_dict_raw_data))
         if yesno:
             dict_raw_data_values = df_dict_raw_data.values()
-            parser = cPTest_parser_json(process_name, subprocess_name, model)
+            parser = cPTest_parser_json(process_name, subprocess_name)
             dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                            (list(dict_raw_data_values)[0]))
             message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -184,11 +271,20 @@ if __name__ == "__main__":
             print("In mDialog_post_to_ptest().In Performance Test")
             print("==> File ", df_dict_raw_data.keys())
             files_list = list(df_dict_raw_data.keys())
+            if "APD_Alignment" in subprocess_name:
+                APD_DATA = {}
+                APD_DATA["APD Board Current Draw"] = ask_APD_Board_Current_Draw()
+                APD_DATA["APD Shims"] = ask_APD_Shims()
+                APD_DATA["APD Breakdown Supplier"] = ask_APD_Breakdown_Supplier()
+                APD_DATA["APD Peak"] = ask_APD_Peak()
+
             # PUSH FILE
             push_return = ptestHandler.mPTest_database_post_file(process_name, subprocess_name, files_list, model)
     elif "Vertical_Angle" in subprocess_name:
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name, model)
+        parser = cPTest_parser_json(process_name, subprocess_name)
+        print(type(list(dict_raw_data_values)[0]))
+        print(list(dict_raw_data_values)[0])
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -197,7 +293,7 @@ if __name__ == "__main__":
         push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
     elif "Range_Calibration" in subprocess_name:
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name, model)
+        parser = cPTest_parser_json(process_name, subprocess_name)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -212,7 +308,7 @@ if __name__ == "__main__":
             dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
             df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
             dict_raw_data_values = df_dict_raw_data.values()
-            parser = cPTest_parser_json(process_name, subprocess_name, model)
+            parser = cPTest_parser_json(process_name, subprocess_name)
             dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
             message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -227,7 +323,7 @@ if __name__ == "__main__":
         dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
         df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name, model)
+        parser = cPTest_parser_json(process_name, subprocess_name)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -241,7 +337,7 @@ if __name__ == "__main__":
         dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
         df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name, model)
+        parser = cPTest_parser_json(process_name, subprocess_name)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -255,7 +351,7 @@ if __name__ == "__main__":
         dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
         df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name, model)
+        parser = cPTest_parser_json(process_name, subprocess_name)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
@@ -269,7 +365,7 @@ if __name__ == "__main__":
         dict_master_process, dict_master_process_keys = ptestHandler.mPTest_database_get_json_process_file()
         df_dict_raw_data = Test_results.mResults_get_input_files(subprocess_name, results_dir_path, model)
         dict_raw_data_values = df_dict_raw_data.values()
-        parser = cPTest_parser_json(process_name, subprocess_name, model)
+        parser = cPTest_parser_json(process_name, subprocess_name)
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
