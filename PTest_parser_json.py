@@ -3,10 +3,10 @@ import logging
 
 class cPTest_parser_json:
 
-    def __init__(self, process_name, subprocess_name, model):
+    def __init__(self, process_name, subprocess_name):
         self. process_name = process_name
         self.subprocess_name = subprocess_name
-        self.model = model
+
     # Parser process
     def mPtest_parser_get_process(self, dict_master_process):
 
@@ -165,14 +165,12 @@ class cPTest_parser_json:
                 dict_final_data_packet = {}
 
                 # Generate empty final format and handle spec vs spec_bool types
-                print(range(len(dict_final_process['rows'])))
                 for i in range(len(dict_final_process['rows'])):
                     # Parse row keys and initilize col dict
                     current_row = dict_final_process['rows'][i]
                     col_dict = {}
 
                     for j in range(len(dict_final_process['cols'].keys())):
-                        print(j)
                         # Parse col keys
                         col_key = list(dict_final_process['cols'].keys())[j]
                         current_col = dict_final_process['cols'][col_key]
@@ -182,14 +180,13 @@ class cPTest_parser_json:
                             # Build col dict for row
                             col_dict_temp = {col_key: {"value": ""}}
                             col_dict.update(col_dict_temp)
-                        if 'spec_bool' in current_col :
+                        if 'spec_bool' in current_col:
                             # Build col dict for row
                             col_dict_temp = {col_key: {"value": ""}, 'spec_bool': "1"}
                             col_dict.update(col_dict_temp)
 
                     # Update dictFinalFormat by row
                     dict_final_data_packet[current_row] = col_dict
-
             else:
 
                 logging.error("In mPTest_parser_create_data_packet(): Parser failed to create Data Packet")
@@ -208,34 +205,16 @@ class cPTest_parser_json:
         print(dict_input_raw_data)
         # Fill dictFinalFormat with inputDataFrame
         logging.info("In mPTest_fill_data_packet(): Fill JSON FinalProcessPacket with InputDataPacket")
-        if "Range_Calibration" in self.subprocess_name and "mq" in self.model:
-            for ii, i in enumerate(dict_final_data_packet):
-                for ij, j in enumerate(dict_final_data_packet[i]):
-                    print(dict_final_data_packet[i])
-                    print(i, " - ", j, " : ")
-                    if "spec_bool" in j:
-                        break
-                    elif "offset" in j:
-                        print(dict_input_raw_data[j][i])
-                        if str(dict_input_raw_data[j][i]) == "-0.0":
-                            dict_input_raw_data[j][i] = "0.0"
-                        if str(dict_input_raw_data[j][i]) == "0.0":
-                            dict_input_raw_data[j][i] = "0"
-                    dict_final_data_packet[i][j]['value'] = dict_input_raw_data[j][i]
-        else:
-            for ii, i in enumerate(dict_final_data_packet):
-                for ij, j in enumerate(dict_final_data_packet[i]):
-                    print(i, " - ", j, " : ")
-                    print(dict_input_raw_data[j][i])
-                    print(dict_final_data_packet)
-                    if str(dict_input_raw_data[j][i]) == "-0.0":
-                        dict_input_raw_data[j][i] = "0.0"
-                    if str(dict_input_raw_data[j][i]) == "0.0":
-                        dict_input_raw_data[j][i] = "0"
-                    dict_final_data_packet[i][j]['value'] = dict_input_raw_data[j][i]
-
+        for ii, i in enumerate(dict_final_data_packet):
+            for ij, j in enumerate(dict_final_data_packet[i]):
+                # print(i, " - ", j, " : ")
+                # print(dict_input_raw_data[j][i])
+                if str(dict_input_raw_data[j][i]) == "-0.0":
+                    dict_input_raw_data[j][i] = "0.0"
+                if str(dict_input_raw_data[j][i]) == "0.0":
+                    dict_input_raw_data[j][i] = "0"
+                dict_final_data_packet[i][j]['value'] = dict_input_raw_data[j][i]
 
         print("In mPTest_fill_data_packet():  Dictionary of Final Data Packet", dict_final_data_packet)
 
         return dict_final_data_packet
-

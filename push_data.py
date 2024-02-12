@@ -7,7 +7,8 @@ import tkinter as tk
 from tkinter import simpledialog, messagebox
 # from Ui_Plot_Dialog import Ui_Plot_Dialog
 # from choiseBox import choiseBox
-# import pandas as pd
+import pandas as pd
+import numpy as np
 # import platform
 # import time
 
@@ -15,89 +16,102 @@ def ask_APD_Shims():
     def on_closing():
         quit(0)
     root = tk.Tk()
-    labels = ["APD Shims", "shims_A", "shims_B", "shims_C", "shims_D"]
+    labels = ["APD_Shims", "shim_A", "shim_B", "shim_C", "shim_D"]
     entry_widgets = []
     for i, label_text in enumerate(labels):
         tk.Label(root, text=label_text).grid(row=i, column=0, padx=5, pady=5, sticky="w")
-
+    tk.Label(root, text="height").grid(row=0, column=1, padx=5, pady=5, sticky="w")
     for i in range(1, 5):
         entry = tk.Entry(root)
         entry.grid(row=i, column=1, padx=5, pady=5)
         entry_widgets.append(entry)
 
-    save_button = tk.Button(root, text="SAVE", command=root.quit)
+    def save_close():
+        global APD_Shims
+        data = {}
+        for label, entry in zip(labels[1:], entry_widgets):
+            data[label] = str(entry.get())
+        APD_Shims = pd.DataFrame(data.values(), columns=["height"], index=data.keys())
+        root.quit()
+        root.destroy()
+
+    save_button = tk.Button(root, text="SAVE", command=save_close)
     save_button.grid(row=5, column=0, columnspan=2, padx=5, pady=10)
 
     root.protocol("WM_DELETE_WINDOW", on_closing)
     root.mainloop()
 
-    return [entry.get() for entry in entry_widgets]
-
 def ask_APD_Peak():
     def on_closing():
         quit(0)
     root = tk.Tk()
-    labels = ["APD Peak", "beam1", "beam8"]
+    labels = ["APD_Peak", "beam1", "beam8"]
     entry_widgets = []
     for i, label_text in enumerate(labels):
         tk.Label(root, text=label_text).grid(row=i, column=0, padx=5, pady=5, sticky="w")
-
+    tk.Label(root, text="peak").grid(row=0, column=1, padx=5, pady=5, sticky="w")
     for i in range(1, 3):
         entry = tk.Entry(root)
         entry.grid(row=i, column=1, padx=5, pady=5)
         entry_widgets.append(entry)
 
-    save_button = tk.Button(root, text="SAVE", command=root.quit)
+    def save_close():
+        global APD_Peak
+        data = {}
+        for label, entry in zip(labels[1:], entry_widgets):
+            data[label] = str(entry.get())
+        APD_Peak = pd.DataFrame(data.values(), columns=["peak"], index=data.keys())
+        root.quit()
+        root.destroy()
+
+    save_button = tk.Button(root, text="SAVE", command=save_close)
     save_button.grid(row=3, column=0, columnspan=2, padx=5, pady=10)
 
     root.protocol("WM_DELETE_WINDOW", on_closing)
     root.mainloop()
 
-    return [entry.get() for entry in entry_widgets]
-
 def ask_APD_Board_Current_Draw():
     def on_closing():
         quit(0)
     root = tk.Tk()
-    labels = ["APD Board Current Draw", "(mA)"]
-    entry_widgets = []
-    for i, label_text in enumerate(labels):
-        tk.Label(root, text=label_text).grid(row=i, column=0, padx=5, pady=5, sticky="w")
+    tk.Label(root, text="APD_Board_Current_Draw").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+    tk.Label(root, text="(mA)").grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
-    for i in range(1, 2):
-        entry = tk.Entry(root)
-        entry.grid(row=i, column=1, padx=5, pady=5)
-        entry_widgets.append(entry)
+    entry = tk.Entry(root)
+    entry.grid(row=0, column=2, padx=5, pady=5)
 
-    save_button = tk.Button(root, text="SAVE", command=root.quit)
+    def save_close():
+        global APD_Board_Current_Draw
+        APD_Board_Current_Draw = np.float64(entry.get())
+        root.quit()
+        root.destroy()
+
+    save_button = tk.Button(root, text="SAVE", command=save_close)
     save_button.grid(row=2, column=0, columnspan=2, padx=5, pady=10)
-
     root.protocol("WM_DELETE_WINDOW", on_closing)
     root.mainloop()
-
-    return [entry.get() for entry in entry_widgets]
 
 def ask_APD_Breakdown_Supplier():
     def on_closing():
         quit(0)
     root = tk.Tk()
-    labels = ["APD Breakdown Supplier", "(V)"]
-    entry_widgets = []
-    for i, label_text in enumerate(labels):
-        tk.Label(root, text=label_text).grid(row=i, column=0, padx=5, pady=5, sticky="w")
+    tk.Label(root, text="APD_Breakdown_Supplier").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+    tk.Label(root, text="(V)").grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
-    for i in range(1, 2):
-        entry = tk.Entry(root)
-        entry.grid(row=i, column=1, padx=5, pady=5)
-        entry_widgets.append(entry)
+    entry = tk.Entry(root)
+    entry.grid(row=0, column=2, padx=5, pady=5)
 
-    save_button = tk.Button(root, text="SAVE", command=root.quit)
+    def save_close():
+        global APD_Breakdown_Supplier
+        APD_Breakdown_Supplier = np.float64(entry.get())
+        root.quit()
+        root.destroy()
+
+    save_button = tk.Button(root, text="SAVE", command=save_close)
     save_button.grid(row=2, column=0, columnspan=2, padx=5, pady=10)
-
     root.protocol("WM_DELETE_WINDOW", on_closing)
-    root.mainloop()
 
-    return [entry.get() for entry in entry_widgets]
+    root.mainloop()
 
 def askQP(subname):
     sn = "xx"
@@ -271,20 +285,27 @@ if __name__ == "__main__":
             print("In mDialog_post_to_ptest().In Performance Test")
             print("==> File ", df_dict_raw_data.keys())
             files_list = list(df_dict_raw_data.keys())
-            if "APD_Alignment" in subprocess_name:
-                APD_DATA = {}
-                APD_DATA["APD Board Current Draw"] = ask_APD_Board_Current_Draw()
-                APD_DATA["APD Shims"] = ask_APD_Shims()
-                APD_DATA["APD Breakdown Supplier"] = ask_APD_Breakdown_Supplier()
-                APD_DATA["APD Peak"] = ask_APD_Peak()
-
             # PUSH FILE
             push_return = ptestHandler.mPTest_database_post_file(process_name, subprocess_name, files_list, model)
+            ask_APD_Board_Current_Draw()
+            ask_APD_Shims()
+            ask_APD_Breakdown_Supplier()
+            ask_APD_Peak()
+            TYPING_DATA_APD = [APD_Board_Current_Draw, APD_Shims, APD_Breakdown_Supplier,
+                               APD_Peak]
+            APD_name = ["APD_Board_Current_Draw", "APD_Shims", "APD_Breakdown_Supplier", "APD_Peak"]
+            list_APD = 0
+            for data in TYPING_DATA_APD:
+                subprocess_name = APD_name[list_APD]
+                parser = cPTest_parser_json(process_name, subprocess_name)
+                dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process, data)
+                message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
+                print(message)
+                push_return = ptestHandler.mPTest_database_post_json(process_name, subprocess_name, dict_finalDataPacket)
+                list_APD = list_APD+1
     elif "Vertical_Angle" in subprocess_name:
         dict_raw_data_values = df_dict_raw_data.values()
         parser = cPTest_parser_json(process_name, subprocess_name)
-        print(type(list(dict_raw_data_values)[0]))
-        print(list(dict_raw_data_values)[0])
         dict_finalDataPacket = parser.mPTest_parser_create_data_packet(dict_master_process,
                                                                        (list(dict_raw_data_values)[0]))
         message = "In mGui_post_all_input_files: {0} {1}".format(subprocess_name, dict_finalDataPacket)
